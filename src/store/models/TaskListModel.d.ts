@@ -1,7 +1,8 @@
 export interface TaskModel {
-  id: number;
+  id: string;
   text: string;
   date: string;
+  favourite: boolean;
 }
 
 export interface TaskListModel {

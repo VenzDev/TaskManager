@@ -8,12 +8,17 @@
     handle=".listName"
     class="listsContainer"
   >
-    <div class="list" v-for="column in tasksColumns" :key="column.id">
+    <div class="list" v-for="(column, colIndex) in tasksColumns" :key="column.id">
       <h2 class="listName">{{ column.text }}</h2>
       <div class="tasksContainer">
         <Draggable @start="start" @end="end" :list="column.list" v-bind="dragOptions" group="tasks">
-          <div class="task" v-for="task in column.list" :key="task.id">
-            <router-link v-if="editTask !== task.id" to="/test">
+          <div
+            class="task"
+            :class="{ favourite: task.favourite }"
+            v-for="(task, taskIndex) in column.list"
+            :key="task.id"
+          >
+            <router-link tag="p" v-if="editTask !== task.id" to="/test">
               {{ task.text }}
             </router-link>
             <input v-else v-model="editTaskText" type="text" />
@@ -29,10 +34,16 @@
                     v-if="editTask !== task.id"
                     class="fas fa-edit"
                   ></i>
-                  <i @click="handleEditTask(column.id)" v-else style="color:green;" class="fas fa-check"></i>
+                  <i @click="handleEditTask(colIndex)" v-else style="color:green;" class="fas fa-check"></i>
                 </p>
-                <p><i class="far fa-star"></i></p>
-                <p><i class="far fa-trash-alt"></i></p>
+                <p>
+                  <i
+                    @click="toggleFavourite(colIndex, taskIndex)"
+                    :class="{ favourite: task.favourite }"
+                    class="far fa-star"
+                  ></i>
+                </p>
+                <p><i @click="removeTask(colIndex, taskIndex)" class="far fa-trash-alt"></i></p>
               </div>
             </div>
           </div>
@@ -46,7 +57,7 @@
           <p>Nowe zadanie</p>
           <input v-model="newTask" type="text" />
           <div>
-            <p @click="createNewTask(column.id)"><i class="fas fa-check"></i></p>
+            <p @click="createNewTask(colIndex)"><i class="fas fa-check"></i></p>
             <p @click="closeCreateTaskInput"><i class="fas fa-times"></i></p>
           </div>
         </div>
@@ -56,9 +67,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from "vue-property-decorator";
+import { Vue, Component } from "vue-property-decorator";
 import Draggable from "vuedraggable";
-import { TaskListModel, TaskModel } from "@/store/models/TaskListModel";
 import DraggableEvent from "@/store/models/DraggableEvent";
 import tasks from "@/store/modules/tasks";
 
@@ -66,9 +76,8 @@ import tasks from "@/store/modules/tasks";
 export default class Home extends Vue {
   createNewId: number | null = null;
   newTask: string | null = null;
-  editTask: number | null = null;
+  editTask: string | null = null;
   editTaskText: string | null = null;
-  idCounter = 30;
   get dragOptions() {
     return {
       animation: 300,
@@ -78,6 +87,9 @@ export default class Home extends Vue {
 
   get tasksColumns() {
     return tasks.allTasks;
+  }
+  set tasksColumns(_tasks) {
+    if (_tasks) tasks.updateTasks(_tasks);
   }
 
   created() {
@@ -91,40 +103,30 @@ export default class Home extends Vue {
     e.item.classList.remove("hide");
     if (this.tasksColumns) tasks.changeTasks(this.tasksColumns);
   }
-  createNewTask(columnId: number) {
-    const filteredList = this.tasksColumns?.filter(column => column.id === columnId)[0];
-    if (filteredList && this.newTask) {
-      const newDate = new Date().toLocaleString();
-      console.log(newDate);
-      const newTask: TaskModel = {
-        id: this.idCounter,
-        text: this.newTask,
-        date: newDate
-      };
-      this.idCounter++;
-      filteredList.list.push(newTask);
-      this.createNewId = null;
-      this.newTask = null;
+  createNewTask(columnIndex: number) {
+    if (this.newTask) {
+      tasks.createTask({ columnIndex, text: this.newTask });
+      this.closeCreateTaskInput();
     }
   }
-  handleEditTask(listId: number) {
-    if (this.tasksColumns) {
-      const task = this.tasksColumns[listId].list.filter(task => task.id === this.editTask)[0];
-      const index = this.tasksColumns[listId].list.indexOf(task);
-      if (this.editTaskText) {
-        this.tasksColumns[listId].list[index].text = this.editTaskText;
-      }
-      this.editTaskText = null;
-      this.editTask = null;
-    }
+  removeTask(columnIndex: number, taskIndex: number) {
+    tasks.removeTask({ columnIndex, taskIndex });
+  }
+  handleEditTask(columnIndex: number) {
+    if (this.editTask && this.editTaskText)
+      tasks.editTask({ columnIndex, taskId: this.editTask, text: this.editTaskText });
+    this.closeEditTaskInput();
+  }
+  toggleFavourite(columnIndex: number, taskIndex: number) {
+    tasks.toggleFavourite({ columnIndex, taskIndex });
   }
   closeCreateTaskInput() {
     this.createNewId = null;
     this.newTask = null;
   }
-  @Watch("array", { deep: true })
-  watchArray() {
-    if (this.tasksColumns) tasks.changeTasks(this.tasksColumns);
+  closeEditTaskInput() {
+    this.editTaskText = null;
+    this.editTask = null;
   }
 }
 </script>
@@ -148,17 +150,30 @@ export default class Home extends Vue {
     }
 
     & .tasksContainer {
-      min-height: 50px;
       background-color: lightgray;
+      min-height: 50px;
+      max-height: 69vh;
+      overflow-y: auto;
+      overflow-x: hidden;
       padding: 1rem 0;
       box-shadow: 0px 6px 12px 4px rgba(0, 0, 0, 0.25) inset;
-
+      & > div {
+        min-height: 50px;
+      }
       & .task {
         background-color: $color-light;
         padding: 1rem;
         margin: 1rem;
         border-radius: 6px;
         cursor: grab;
+
+        &.favourite {
+          border-left: 4px solid blue;
+        }
+
+        & > p {
+          word-wrap: break-word;
+        }
 
         & .taskOptions {
           font-size: 0.8rem;
@@ -169,6 +184,10 @@ export default class Home extends Vue {
           & .optionsContainer {
             margin-top: 0.5rem;
             display: flex;
+
+            & .favourite {
+              color: blue;
+            }
 
             & p {
               flex-basis: 33.33%;
