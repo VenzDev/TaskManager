@@ -1,6 +1,6 @@
 <template>
   <Draggable
-    v-model="array"
+    v-model="tasksColumns"
     v-bind="dragOptions"
     @start="start"
     @end="end"
@@ -8,92 +8,123 @@
     handle=".listName"
     class="listsContainer"
   >
-    <div class="list" v-for="el in array" :key="el.id">
-      <h2 class="listName">{{ el.text }}</h2>
+    <div class="list" v-for="column in tasksColumns" :key="column.id">
+      <h2 class="listName">{{ column.text }}</h2>
       <div class="tasksContainer">
-        <Draggable
-          @start="start"
-          @end="end"
-          :list="el.list"
-          v-bind="dragOptions"
-          group="tasks"
-        >
-          <div class="task" v-for="task in el.list" :key="task.id">
-            {{ task.text }}
+        <Draggable @start="start" @end="end" :list="column.list" v-bind="dragOptions" group="tasks">
+          <div class="task" v-for="task in column.list" :key="task.id">
+            <router-link v-if="editTask !== task.id" to="/test">
+              {{ task.text }}
+            </router-link>
+            <input v-else v-model="editTaskText" type="text" />
+            <div class="taskOptions" v-if="task.date">
+              <p>{{ task.date }}</p>
+              <div class="optionsContainer">
+                <p>
+                  <i
+                    @click="
+                      editTask = task.id;
+                      editTaskText = task.text;
+                    "
+                    v-if="editTask !== task.id"
+                    class="fas fa-edit"
+                  ></i>
+                  <i @click="handleEditTask(column.id)" v-else style="color:green;" class="fas fa-check"></i>
+                </p>
+                <p><i class="far fa-star"></i></p>
+                <p><i class="far fa-trash-alt"></i></p>
+              </div>
+            </div>
           </div>
         </Draggable>
       </div>
-      <div class="addTask">+</div>
+      <div class="addTask">
+        <p class="addIcon" v-if="createNewId !== column.id" @click="createNewId = column.id">
+          <i class="fas fa-plus"></i>
+        </p>
+        <div class="input" v-else>
+          <p>Nowe zadanie</p>
+          <input v-model="newTask" type="text" />
+          <div>
+            <p @click="createNewTask(column.id)"><i class="fas fa-check"></i></p>
+            <p @click="closeCreateTaskInput"><i class="fas fa-times"></i></p>
+          </div>
+        </div>
+      </div>
     </div>
   </Draggable>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component, Watch } from "vue-property-decorator";
 import Draggable from "vuedraggable";
+import { TaskListModel, TaskModel } from "@/store/models/TaskListModel";
+import DraggableEvent from "@/store/models/DraggableEvent";
+import tasks from "@/store/modules/tasks";
 
 @Component({ components: { Draggable } })
 export default class Home extends Vue {
+  createNewId: number | null = null;
+  newTask: string | null = null;
+  editTask: number | null = null;
+  editTaskText: string | null = null;
+  idCounter = 30;
   get dragOptions() {
     return {
-      animation: 300
+      animation: 300,
+      dragClass: "dragClass"
     };
   }
-  array: Array<object> = [
-    {
-      id: 0,
-      text: "text1",
-      list: [
-        { id: 0, text: "list1-0" },
-        { id: 1, text: "list1-1" },
-        { id: 2, text: "list1-2" },
-        { id: 3, text: "list1-3" },
-        { id: 4, text: "list1-4" },
-        { id: 5, text: "list1-5" }
-      ]
-    },
-    {
-      id: 1,
-      text: "text2",
-      list: [
-        { id: 6, text: "list2-0" },
-        { id: 7, text: "list2-1" },
-        { id: 8, text: "list2-2" },
-        { id: 9, text: "list2-3" },
-        { id: 10, text: "list2-4" },
-        { id: 11, text: "list2-5" }
-      ]
-    },
-    {
-      id: 2,
-      text: "text3",
-      list: [
-        { id: 12, text: "list3-0" },
-        { id: 13, text: "list3-1" },
-        { id: 14, text: "list3-2" },
-        { id: 15, text: "list3-3" },
-        { id: 16, text: "list3-4" },
-        { id: 17, text: "list3-5" }
-      ]
-    },
-    {
-      id: 3,
-      text: "text4",
-      list: [
-        { id: 18, text: "list4-0" },
-        { id: 19, text: "list4-1" },
-        { id: 20, text: "list4-2" },
-        { id: 21, text: "list4-3" },
-        { id: 22, text: "list4-4" },
-        { id: 23, text: "list4-5" }
-      ]
-    }
-  ];
-  start(e: any) {
+
+  get tasksColumns() {
+    return tasks.allTasks;
+  }
+
+  created() {
+    tasks.getTasksFromLocalStorage();
+  }
+
+  start(e: DraggableEvent) {
     e.item.classList.add("hide");
   }
-  end(e: any) {
+  end(e: DraggableEvent) {
     e.item.classList.remove("hide");
+    if (this.tasksColumns) tasks.changeTasks(this.tasksColumns);
+  }
+  createNewTask(columnId: number) {
+    const filteredList = this.tasksColumns?.filter(column => column.id === columnId)[0];
+    if (filteredList && this.newTask) {
+      const newDate = new Date().toLocaleString();
+      console.log(newDate);
+      const newTask: TaskModel = {
+        id: this.idCounter,
+        text: this.newTask,
+        date: newDate
+      };
+      this.idCounter++;
+      filteredList.list.push(newTask);
+      this.createNewId = null;
+      this.newTask = null;
+    }
+  }
+  handleEditTask(listId: number) {
+    if (this.tasksColumns) {
+      const task = this.tasksColumns[listId].list.filter(task => task.id === this.editTask)[0];
+      const index = this.tasksColumns[listId].list.indexOf(task);
+      if (this.editTaskText) {
+        this.tasksColumns[listId].list[index].text = this.editTaskText;
+      }
+      this.editTaskText = null;
+      this.editTask = null;
+    }
+  }
+  closeCreateTaskInput() {
+    this.createNewId = null;
+    this.newTask = null;
+  }
+  @Watch("array", { deep: true })
+  watchArray() {
+    if (this.tasksColumns) tasks.changeTasks(this.tasksColumns);
   }
 }
 </script>
@@ -113,18 +144,84 @@ export default class Home extends Vue {
 
     & .listName {
       cursor: grab;
+      padding: 1rem;
     }
 
     & .tasksContainer {
       min-height: 50px;
-      background-color: gray;
+      background-color: lightgray;
       padding: 1rem 0;
+      box-shadow: 0px 6px 12px 4px rgba(0, 0, 0, 0.25) inset;
 
       & .task {
         background-color: $color-light;
         padding: 1rem;
         margin: 1rem;
         border-radius: 6px;
+        cursor: grab;
+
+        & .taskOptions {
+          font-size: 0.8rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+
+          & .optionsContainer {
+            margin-top: 0.5rem;
+            display: flex;
+
+            & p {
+              flex-basis: 33.33%;
+              text-align: center;
+              font-size: 1rem;
+              &:hover {
+                cursor: pointer;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    & .addTask {
+      padding: 0.5rem;
+      text-align: center;
+
+      & .addIcon {
+        font-size: 1.5rem;
+        transition: 0.2s;
+
+        &:hover {
+          color: blue;
+        }
+      }
+
+      & > p {
+        cursor: pointer;
+      }
+
+      & .input {
+        & input {
+          margin: 0.6rem 0;
+          padding: 0.4rem;
+          border: 1px solid black;
+        }
+        & > div {
+          display: flex;
+          margin: 0 1rem;
+          & p {
+            flex-basis: 50%;
+            color: green;
+            cursor: pointer;
+            transition: 0.2s;
+            &:hover {
+              transform: scale(1.2);
+            }
+            &:last-child {
+              color: red;
+            }
+          }
+        }
       }
     }
   }
