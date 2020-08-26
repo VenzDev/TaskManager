@@ -7,8 +7,8 @@ export default interface UserModel {
   avatar: string;
   description: string;
   job_title: string | null;
-  lat: string | number;
-  lng: string | number;
+  lat: number;
+  lng: number;
   postal_code: string | null;
   street: string;
   city: string;

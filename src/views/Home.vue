@@ -22,6 +22,9 @@
               {{ task.text }}
             </router-link>
             <input v-else v-model="editTaskText" type="text" />
+            <router-link tag="p" v-if="task.user" :to="`/user/${task.user.id}`">
+              {{ task.user.first_name + " " + task.user.last_name }}
+            </router-link>
             <div class="taskOptions" v-if="task.date">
               <p>{{ task.date }}</p>
               <div class="optionsContainer">

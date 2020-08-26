@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 import vuescroll from "vuescroll";
 import { config } from "vuex-module-decorators";
+import "leaflet/dist/leaflet.css";
 
 config.rawError = true;
 Vue.use(vuescroll);

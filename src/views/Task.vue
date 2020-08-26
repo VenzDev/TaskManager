@@ -23,8 +23,9 @@
         <div class="textareaWrapper" @click="handleActiveTextarea">
           <textarea
             ref="textarea"
+            :placeholder="task.description ? task.description : 'Wpisz badziej szczegółowy opis'"
             :class="{ active: activeTextarea }"
-            v-model="task.description"
+            v-model="taskDescription"
             :disabled="!activeTextarea"
           ></textarea>
         </div>
@@ -108,12 +109,13 @@ export default class Task extends Vue {
     this.updateTask();
   }
   editTaskDescription() {
-    if (this.columnOrder && this.taskOrder && this.taskDescription)
+    if (this.columnOrder !== null && this.taskOrder !== null && this.taskDescription) {
       tasks.editTaskDescription({
         columnOrder: this.columnOrder,
         taskOrder: this.taskOrder,
         description: this.taskDescription
       });
+    }
     this.disableTextarea();
   }
   disableTextarea() {

@@ -97,6 +97,7 @@ class Tasks extends VuexModule {
   }
   @Action({ commit: "updateTasks" })
   editTaskDescription({ columnOrder, taskOrder, description }: EditTaskDescriptionParams) {
+    console.log("asdsa");
     this.tasksColumns[columnOrder].list[taskOrder].description = description;
     return this.tasksColumns;
   }
