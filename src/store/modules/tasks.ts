@@ -3,6 +3,7 @@ import store from "@/store";
 import { TaskListModel, TaskModel } from "../models/TaskListModel";
 import { initTasks } from "../initTasks";
 import generateID from "@/utils/generateID";
+import UserModel from "../models/UserModel";
 
 interface EditTaskParams {
   columnIndex: number;
@@ -35,6 +36,12 @@ interface MoveTaskParams {
   columnOrder: number;
   taskOrder: number;
   columnId: number;
+}
+
+interface AssignUserParams {
+  columnOrder: number;
+  taskOrder: number;
+  user: UserModel;
 }
 
 @Module({
@@ -72,7 +79,8 @@ class Tasks extends VuexModule {
       text,
       date: newDate,
       favourite: false,
-      description: null
+      description: null,
+      user: null
     };
     this.tasksColumns[columnIndex].list.push(newTask);
     return this.tasksColumns;
@@ -95,6 +103,11 @@ class Tasks extends VuexModule {
   @Action({ commit: "updateTasks" })
   removeTask({ columnIndex, taskIndex }: RemoveTaskParams) {
     this.tasksColumns[columnIndex].list.splice(taskIndex, 1);
+    return this.tasksColumns;
+  }
+  @Action({ commit: "updateTasks" })
+  assignUserToTask({ columnOrder, taskOrder, user }: AssignUserParams) {
+    this.tasksColumns[columnOrder].list[taskOrder].user = user;
     return this.tasksColumns;
   }
 

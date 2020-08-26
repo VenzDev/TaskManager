@@ -8,6 +8,13 @@
       :taskOrder="taskOrder"
       :updateTask="updateTask"
     />
+    <AssignUserModal
+      :columnOrder="columnOrder"
+      :taskOrder="taskOrder"
+      :updateTask="updateTask"
+      :isModalOpen="isAssignUserModalOpen"
+      :toggleModal="toggleAssignUserModal"
+    />
     <div class="task">
       <div class="taskDesc">
         <button @click="handleRedirect"><i class="fas fa-arrow-left"></i> Wróć do listy zadań</button>
@@ -25,20 +32,23 @@
           <button @click="editTaskDescription"><i class="fas fa-edit"></i> Edytuj</button>
           <button @click="disableTextarea"><i class="fas fa-times"></i></button>
         </div>
-        <p>Nie przydzielono użytkownika do zadania</p>
-        <p>Nie przydzielono użytkownika do zadania</p>
-        <p>Nie przydzielono użytkownika do zadania</p>
-        <p>Nie przydzielono użytkownika do zadania</p>
-        <p>Nie przydzielono użytkownika do zadania</p>
-        <p>Nie przydzielono użytkownika do zadania</p>
-        <p>Nie przydzielono użytkownika do zadania</p>
-        <p>Nie przydzielono użytkownika do zadania</p>
-        <p>Nie przydzielono użytkownika do zadania</p>
-        <p>Nie przydzielono użytkownika do zadania</p>
+        <p v-if="!task.user">Nie przydzielono użytkownika do zadania</p>
+        <div v-else class="userDesc">
+          <div>
+            <p>{{ task.user.first_name + " " + task.user.last_name }}</p>
+            <p>{{ task.user.email }}</p>
+            <p>{{ task.user.job_title }}</p>
+            <p>{{ task.user.city }}</p>
+            <p>{{ task.user.street }}</p>
+          </div>
+          <div>
+            <img :src="task.user.avatar" alt="avatar" />
+          </div>
+        </div>
       </div>
       <div class="taskOptions">
         <h2>Działania</h2>
-        <button><i class="far fa-user"></i> Przydziel zadanie</button>
+        <button @click="toggleAssignUserModal"><i class="far fa-user"></i> Przydziel zadanie</button>
         <button @click="toggleMoveTaskModal"><i class="fas fa-exchange-alt"></i> Przenieś zadanie</button>
       </div>
     </div>
@@ -50,8 +60,9 @@ import { Vue, Component } from "vue-property-decorator";
 import tasks from "@/store/modules/tasks";
 import { TaskModel } from "@/store/models/TaskListModel";
 import MoveTaskModal from "@/components/MoveTaskModal.vue";
+import AssignUserModal from "@/components/AssignUserModal.vue";
 
-@Component({ components: { MoveTaskModal } })
+@Component({ components: { MoveTaskModal, AssignUserModal } })
 export default class Task extends Vue {
   columnName: string | null = null;
   task: TaskModel | null = null;
@@ -62,6 +73,7 @@ export default class Task extends Vue {
   taskOrder: number | null = null;
 
   isMoveTaskModalOpen = false;
+  isAssignUserModalOpen = false;
 
   handleActiveTextarea() {
     this.activeTextarea = true;
@@ -70,6 +82,9 @@ export default class Task extends Vue {
 
   toggleMoveTaskModal() {
     this.isMoveTaskModalOpen = !this.isMoveTaskModalOpen;
+  }
+  toggleAssignUserModal() {
+    this.isAssignUserModalOpen = !this.isAssignUserModalOpen;
   }
 
   updateTask() {
@@ -203,6 +218,15 @@ export default class Task extends Vue {
         &:last-child {
           background-color: red;
         }
+      }
+    }
+    & .userDesc {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      & div {
+        flex: 0 0 50%;
       }
     }
 
