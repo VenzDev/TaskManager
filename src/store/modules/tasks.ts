@@ -31,6 +31,12 @@ interface EditTaskDescriptionParams {
   description: string;
 }
 
+interface MoveTaskParams {
+  columnOrder: number;
+  taskOrder: number;
+  columnId: number;
+}
+
 @Module({
   name: "tasks",
   dynamic: true,
@@ -89,6 +95,19 @@ class Tasks extends VuexModule {
   @Action({ commit: "updateTasks" })
   removeTask({ columnIndex, taskIndex }: RemoveTaskParams) {
     this.tasksColumns[columnIndex].list.splice(taskIndex, 1);
+    return this.tasksColumns;
+  }
+
+  @Action({ commit: "updateTasks" })
+  moveTask({ columnOrder, taskOrder, columnId }: MoveTaskParams) {
+    const task = this.tasksColumns[columnOrder].list[taskOrder];
+    this.tasksColumns[columnOrder].list.splice(taskOrder, 1);
+
+    this.tasksColumns.forEach((column, index) => {
+      if (columnId === column.id) {
+        this.tasksColumns[index].list.push(task);
+      }
+    });
     return this.tasksColumns;
   }
 

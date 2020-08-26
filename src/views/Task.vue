@@ -1,5 +1,13 @@
 <template>
   <div>
+    <MoveTaskModal
+      :isModalOpen="isMoveTaskModalOpen"
+      :toggleModal="toggleMoveTaskModal"
+      :currentColumnName="columnName"
+      :columnOrder="columnOrder"
+      :taskOrder="taskOrder"
+      :updateTask="updateTask"
+    />
     <div class="task">
       <div class="taskDesc">
         <button @click="handleRedirect"><i class="fas fa-arrow-left"></i> Wróć do listy zadań</button>
@@ -22,17 +30,19 @@
       <div class="taskOptions">
         <h2>Działania</h2>
         <button><i class="far fa-user"></i> Przydziel zadanie</button>
-        <button><i class="fas fa-exchange-alt"></i> Przenieś zadanie</button>
+        <button @click="toggleMoveTaskModal"><i class="fas fa-exchange-alt"></i> Przenieś zadanie</button>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component, Watch } from "vue-property-decorator";
 import tasks from "@/store/modules/tasks";
 import { TaskModel } from "@/store/models/TaskListModel";
-@Component
+import MoveTaskModal from "@/components/MoveTaskModal.vue";
+
+@Component({ components: { MoveTaskModal } })
 export default class Task extends Vue {
   columnName: string | null = null;
   task: TaskModel | null = null;
@@ -42,12 +52,18 @@ export default class Task extends Vue {
   columnOrder: number | null = null;
   taskOrder: number | null = null;
 
+  isMoveTaskModalOpen = false;
+
   handleActiveTextarea() {
     this.activeTextarea = true;
     this.$nextTick(() => (this.$refs.textarea as HTMLInputElement).focus());
   }
 
-  created() {
+  toggleMoveTaskModal() {
+    this.isMoveTaskModalOpen = !this.isMoveTaskModalOpen;
+  }
+
+  updateTask() {
     const taskId = this.$route.params.id;
     const tasksColumns = tasks.allTasks;
     tasksColumns.forEach((column, colOrder) => {
@@ -62,6 +78,10 @@ export default class Task extends Vue {
     });
     if (this.task) this.taskDescription = this.task.description;
     if (this.columnName === null) this.$router.push("/");
+  }
+
+  created() {
+    this.updateTask();
   }
   editTaskDescription() {
     if (this.columnOrder && this.taskOrder && this.taskDescription)
