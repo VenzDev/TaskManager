@@ -78,6 +78,7 @@ export default class Home extends Vue {
   newTask: string | null = null;
   editTask: string | null = null;
   editTaskText: string | null = null;
+
   get dragOptions() {
     return {
       animation: 300,
@@ -134,14 +135,32 @@ export default class Home extends Vue {
   display: flex;
   align-items: flex-start;
   justify-content: space-around;
-  overflow: auto;
   padding-top: 1rem;
+
+  @media (max-width: 1000px) {
+    justify-content: flex-start;
+    overflow: auto;
+
+    &::-webkit-scrollbar {
+      height: 10px;
+      background-color: lightgray;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: gray;
+      border-radius: 6px;
+    }
+  }
 
   & .list {
     flex: 0 0 18%;
     border-radius: 6px;
     background-color: $color-light;
     box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+
+    @media (max-width: 1000px) {
+      flex: 0 0 250px;
+      margin-right: 20px;
+    }
 
     & .listName {
       cursor: grab;
@@ -152,10 +171,19 @@ export default class Home extends Vue {
       background-color: lightgray;
       min-height: 50px;
       max-height: 69vh;
-      overflow-y: auto;
       overflow-x: hidden;
+      overflow-y: auto;
       padding: 1rem 0;
       box-shadow: 0px 6px 12px 4px rgba(0, 0, 0, 0.25) inset;
+
+      &::-webkit-scrollbar {
+        width: 6px;
+        background-color: lightgray;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: gray;
+        border-radius: 6px;
+      }
       & > div {
         min-height: 50px;
       }

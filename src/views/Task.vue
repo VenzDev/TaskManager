@@ -26,6 +26,15 @@
           <button @click="disableTextarea"><i class="fas fa-times"></i></button>
         </div>
         <p>Nie przydzielono użytkownika do zadania</p>
+        <p>Nie przydzielono użytkownika do zadania</p>
+        <p>Nie przydzielono użytkownika do zadania</p>
+        <p>Nie przydzielono użytkownika do zadania</p>
+        <p>Nie przydzielono użytkownika do zadania</p>
+        <p>Nie przydzielono użytkownika do zadania</p>
+        <p>Nie przydzielono użytkownika do zadania</p>
+        <p>Nie przydzielono użytkownika do zadania</p>
+        <p>Nie przydzielono użytkownika do zadania</p>
+        <p>Nie przydzielono użytkownika do zadania</p>
       </div>
       <div class="taskOptions">
         <h2>Działania</h2>
@@ -37,7 +46,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from "vue-property-decorator";
+import { Vue, Component } from "vue-property-decorator";
 import tasks from "@/store/modules/tasks";
 import { TaskModel } from "@/store/models/TaskListModel";
 import MoveTaskModal from "@/components/MoveTaskModal.vue";
@@ -123,6 +132,7 @@ export default class Task extends Vue {
   }
   @media (max-width: 600px) {
     flex-direction: column;
+    height: auto;
   }
 
   & .taskDesc {
