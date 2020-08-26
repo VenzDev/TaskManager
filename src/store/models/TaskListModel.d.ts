@@ -3,6 +3,7 @@ export interface TaskModel {
   text: string;
   date: string;
   favourite: boolean;
+  description: string | null;
 }
 
 export interface TaskListModel {

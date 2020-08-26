@@ -18,7 +18,7 @@
             v-for="(task, taskIndex) in column.list"
             :key="task.id"
           >
-            <router-link tag="p" v-if="editTask !== task.id" to="/test">
+            <router-link tag="p" v-if="editTask !== task.id" :to="`/task/${task.id}`">
               {{ task.text }}
             </router-link>
             <input v-else v-model="editTaskText" type="text" />
@@ -92,10 +92,6 @@ export default class Home extends Vue {
     if (_tasks) tasks.updateTasks(_tasks);
   }
 
-  created() {
-    tasks.getTasksFromLocalStorage();
-  }
-
   start(e: DraggableEvent) {
     e.item.classList.add("hide");
   }
@@ -104,7 +100,7 @@ export default class Home extends Vue {
     if (this.tasksColumns) tasks.changeTasks(this.tasksColumns);
   }
   createNewTask(columnIndex: number) {
-    if (this.newTask) {
+    if (this.newTask && this.newTask.trim()) {
       tasks.createTask({ columnIndex, text: this.newTask });
       this.closeCreateTaskInput();
     }
@@ -137,12 +133,15 @@ export default class Home extends Vue {
 .listsContainer {
   display: flex;
   align-items: flex-start;
+  justify-content: space-around;
+  overflow: auto;
+  padding-top: 1rem;
 
   & .list {
-    margin: 1rem;
-    width: 250px;
+    flex: 0 0 18%;
     border-radius: 6px;
     background-color: $color-light;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
 
     & .listName {
       cursor: grab;
@@ -167,12 +166,22 @@ export default class Home extends Vue {
         border-radius: 6px;
         cursor: grab;
 
+        & input {
+          width: 100%;
+          font-size: 1rem;
+          border: none;
+          margin: 0.3rem 0;
+          box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25) inset;
+        }
+
         &.favourite {
           border-left: 4px solid blue;
         }
 
         & > p {
+          cursor: pointer;
           word-wrap: break-word;
+          margin: 0.3rem 0;
         }
 
         & .taskOptions {

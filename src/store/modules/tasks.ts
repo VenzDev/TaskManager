@@ -25,6 +25,12 @@ interface RemoveTaskParams {
   taskIndex: number;
 }
 
+interface EditTaskDescriptionParams {
+  columnOrder: number;
+  taskOrder: number;
+  description: string;
+}
+
 @Module({
   name: "tasks",
   dynamic: true,
@@ -36,6 +42,9 @@ class Tasks extends VuexModule {
 
   get allTasks() {
     return this.tasksColumns;
+  }
+  get taskByID() {
+    return (id: number) => this.tasksColumns[id];
   }
   @Mutation
   updateTasks(newTasks: Array<TaskListModel>) {
@@ -56,7 +65,8 @@ class Tasks extends VuexModule {
       id: generateID(),
       text,
       date: newDate,
-      favourite: false
+      favourite: false,
+      description: null
     };
     this.tasksColumns[columnIndex].list.push(newTask);
     return this.tasksColumns;
@@ -69,6 +79,11 @@ class Tasks extends VuexModule {
       const taskIndex = this.tasksColumns[columnIndex].list.indexOf(task);
       if (taskIndex !== -1) this.tasksColumns[columnIndex].list[taskIndex].text = text;
     }
+    return this.tasksColumns;
+  }
+  @Action({ commit: "updateTasks" })
+  editTaskDescription({ columnOrder, taskOrder, description }: EditTaskDescriptionParams) {
+    this.tasksColumns[columnOrder].list[taskOrder].description = description;
     return this.tasksColumns;
   }
   @Action({ commit: "updateTasks" })
