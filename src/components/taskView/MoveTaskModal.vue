@@ -6,13 +6,14 @@
         <div class="buttons">
           <button
             :class="{ selected: selectedColumn && selectedColumn.id === column.id }"
-            @click="selectedColumn = column"
+            @click="handleSelectColumn(column)"
             v-for="column in availableColumns"
             :key="column.id"
           >
             {{ column.text }}
           </button>
         </div>
+        <p v-if="error">{{ error }}</p>
         <div class="submitButtons">
           <button @click="toggleModal"><i class="fas fa-times" /></button>
           <button @click="moveTask"><i class="fas fa-exchange-alt"></i> Przenieś</button>
@@ -26,6 +27,8 @@
 import { Vue, Component, Prop } from "vue-property-decorator";
 import Modal from "@/components/Modal.vue";
 import tasks from "@/store/modules/tasks";
+import { PROJECT_MANAGER, list } from "@/store/initTasks";
+import { TaskModel } from "@/store/models/TaskListModel";
 
 interface Column {
   id: number;
@@ -34,6 +37,7 @@ interface Column {
 
 @Component({ components: { Modal } })
 export default class MoveTaskModal extends Vue {
+  @Prop() task!: TaskModel;
   @Prop() isModalOpen!: boolean;
   @Prop() currentColumnName!: string;
   @Prop() columnOrder!: number;
@@ -41,8 +45,18 @@ export default class MoveTaskModal extends Vue {
   @Prop() toggleModal!: Function;
   @Prop() updateTask!: Function;
 
-  availableColumns: Array<object> = [];
+  availableColumns: Array<Column> = [];
   selectedColumn: Column | null = null;
+  error: string | null = null;
+
+  handleSelectColumn(column: Column) {
+    if (column.id === list.DONE && this.task.user && this.task.user.job_title !== PROJECT_MANAGER) {
+      this.error = "Przypisany użytkownik nie jest project managerem";
+      return;
+    }
+    this.error = "";
+    this.selectedColumn = column;
+  }
 
   created() {
     tasks.allTasks.forEach(column => {
@@ -65,6 +79,10 @@ export default class MoveTaskModal extends Vue {
   & h2 {
     text-align: center;
     margin-bottom: 1rem;
+  }
+
+  & p {
+    color: red;
   }
   & .buttons {
     display: flex;

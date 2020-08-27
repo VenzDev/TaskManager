@@ -7,6 +7,7 @@
       :columnOrder="columnOrder"
       :taskOrder="taskOrder"
       :updateTask="updateTask"
+      :task="task"
     />
     <AssignUserModal
       :columnOrder="columnOrder"
@@ -228,7 +229,7 @@ export default class Task extends Vue {
 
     & button {
       @include primaryButtonWithHover;
-      width: 170px;
+      width: 180px;
       margin: 1rem auto;
       background-color: red;
     }

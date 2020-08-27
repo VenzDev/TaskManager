@@ -1,6 +1,6 @@
 <template>
   <div class="task" :class="{ favourite: task.favourite }">
-    <router-link class="taskName" tag="p" v-if="editTask !== task.id" :to="`/task/${task.id}`">
+    <router-link class="taskName" tag="p" v-if="editTaskId !== task.id" :to="`/task/${task.id}`">
       {{ task.text }}
     </router-link>
     <input v-else v-model="editTaskText" type="text" />
@@ -13,10 +13,10 @@
         <p>
           <i
             @click="
-              editTask = task.id;
+              editTaskId = task.id;
               editTaskText = task.text;
             "
-            v-if="editTask !== task.id"
+            v-if="editTaskId !== task.id"
             class="fas fa-edit"
           ></i>
           <i @click="handleEditTask" v-else style="color:green;" class="fas fa-check"></i>

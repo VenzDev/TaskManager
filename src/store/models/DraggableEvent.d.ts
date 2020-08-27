@@ -5,4 +5,12 @@ export default interface DraggableEvent {
       remove: Function;
     };
   };
+  dragged: {
+    id: string;
+  };
+  to: {
+    parentElement: {
+      id: string;
+    };
+  };
 }

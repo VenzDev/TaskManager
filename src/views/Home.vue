@@ -9,9 +9,10 @@
     class="columnsContainer"
   >
     <Column :columnName="column.text" v-for="(column, columnOrder) in tasksColumns" :key="column.id">
-      <div class="tasksContainer">
-        <Draggable @start="start" @end="end" :list="column.list" v-bind="dragOptions" group="tasks">
+      <div class="tasksContainer" :id="column.id">
+        <Draggable @start="start" @end="end" :move="checkMove" :list="column.list" v-bind="dragOptions" group="tasks">
           <Task
+            :id="task.user ? task.user.job_title : null"
             v-for="(task, taskOrder) in column.list"
             :key="task.id"
             :task="task"
@@ -30,10 +31,16 @@ import { Vue, Component } from "vue-property-decorator";
 import Draggable from "vuedraggable";
 import DraggableEvent from "@/store/models/DraggableEvent";
 import tasks from "@/store/modules/tasks";
+import searchbox from "@/store/modules/searchbox";
 import { Column, AddTask, Task } from "@/components/homeView";
+import { TaskListModel } from "@/store/models/TaskListModel";
+import { list, PROJECT_MANAGER } from "@/store/initTasks";
+import UserModel from "@/store/models/UserModel";
 
 @Component({ components: { Draggable, Task, AddTask, Column } })
 export default class Home extends Vue {
+  selectedUser: UserModel | null = null;
+
   get dragOptions() {
     return {
       animation: 300,
@@ -41,8 +48,29 @@ export default class Home extends Vue {
     };
   }
 
-  get tasksColumns() {
+  get allTasks() {
     return tasks.allTasks;
+  }
+
+  //Returns all tasks when there is no selected user
+  //Otherwise returns tasks only assigned to selected user
+  get tasksColumns() {
+    this.selectedUser = searchbox.searchbarUser;
+    if (!searchbox.searchbarUser) return this.allTasks;
+
+    const copyColumns: Array<TaskListModel> = [];
+    const columns = this.allTasks;
+
+    //prevent from modify original tasks
+    for (let i = 0; i < columns.length; i++)
+      copyColumns[i] = Object.assign({ ...columns[i], list: [...columns[i].list] });
+
+    copyColumns.forEach(column => {
+      column.list = column.list.filter(task => {
+        if (task.user && this.selectedUser && task.user.id === this.selectedUser.id) return task;
+      });
+    });
+    return copyColumns;
   }
   set tasksColumns(_tasks) {
     if (_tasks) tasks.updateTasks(_tasks);
@@ -53,7 +81,11 @@ export default class Home extends Vue {
   }
   end(e: DraggableEvent) {
     e.item.classList.remove("hide");
-    if (this.tasksColumns) tasks.changeTasks(this.tasksColumns);
+    tasks.changeTasks(this.allTasks);
+  }
+  checkMove(e: DraggableEvent) {
+    if (parseInt(e.to.parentElement.id) === list.DONE && e.dragged.id !== PROJECT_MANAGER) return false;
+    return true;
   }
 }
 </script>

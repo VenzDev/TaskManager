@@ -1,5 +1,7 @@
 import { TaskListModel } from "./models/TaskListModel";
 
+export const PROJECT_MANAGER = "Project Manager";
+
 export enum list {
   DOING,
   SUSPENDED,
