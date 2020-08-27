@@ -1,13 +1,26 @@
 <template>
   <div>
     <div class="userContainer">
-      <div class="userInfo">
-        <div class="userData"></div>
+      <div v-if="user" class="userInfo">
+        <button @click="handleRedirect"><i class="fas fa-arrow-left"></i> Wróć do listy zadań</button>
+        <div class="userData">
+          <div class="userDesc">
+            <p>{{ user.first_name + " " + user.last_name }}</p>
+            <p>{{ user.job_title }}</p>
+            <p>{{ user.email }}</p>
+            <p>{{ user.street + ", " + user.city }}</p>
+          </div>
+          <div class="userImg">
+            <img :src="user.avatar" alt="avatar" />
+          </div>
+        </div>
         <div class="userMap">
-          <l-map :zoom="zoom" :center="center" :options="mapOptions" @update:zoom="zoomUpdate">
-            <l-tile-layer :url="url" :attribution="attribution" />
-            <l-marker :lat-lng="userLng"> </l-marker>
-          </l-map>
+          <UserMap :userLat="user.lat" :userLng="user.lng" />
+        </div>
+      </div>
+      <div v-else class="userInfo">
+        <div class="loadingSpinner">
+          <LoadingSpinner />
         </div>
       </div>
       <div class="userTasks">
@@ -32,48 +45,18 @@ import { Vue, Component } from "vue-property-decorator";
 import tasks from "@/store/modules/tasks";
 import { TaskModel } from "@/store/models/TaskListModel";
 import { getUser } from "@/store/api";
-import * as L from "leaflet";
-import { LMap, LTileLayer, LMarker, LPopup, LTooltip } from "vue2-leaflet";
+import UserMap from "@/components/UserMap.vue";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import UserModel from "@/store/models/UserModel";
 
-type D = L.Icon.Default & {
-  _getIconUrl: string;
-};
-
-delete (L.Icon.Default.prototype as D)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png")
-});
-
-@Component({ components: { LMap, LMarker, LPopup, LTooltip, LTileLayer } })
+@Component({ components: { UserMap, LoadingSpinner } })
 export default class User extends Vue {
   user: UserModel | null = null;
-  zoom = 3;
-  center = L.latLng(47.41322, -1.219482);
-  url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-  attribution = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
-  userLng = L.latLng(47.41322, -1.219482);
-  currentZoom = 11.5;
-  currentCenter = L.latLng(47.41322, -1.219482);
-  showParagraph = false;
-  mapOptions = {
-    zoomSnap: 0.5
-  };
 
-  zoomUpdate(zoom: number) {
-    this.currentZoom = zoom;
-  }
-
-  async mounted() {
+  async created() {
     const id = parseInt(this.$route.params.id);
     this.user = await getUser(id);
-    if (this.user) {
-      this.center = L.latLng(this.user.lng, this.user.lat);
-      this.currentCenter = L.latLng(this.user.lng, this.user.lat);
-      this.userLng = L.latLng(this.user.lng, this.user.lat);
-    } else this.$router.push("/");
+    if (!this.user) this.$router.push("/");
   }
 
   get userTasks() {
@@ -85,6 +68,10 @@ export default class User extends Vue {
       });
     });
     return userTasks;
+  }
+
+  handleRedirect() {
+    this.$router.push("/");
   }
 }
 </script>
@@ -109,9 +96,51 @@ export default class User extends Vue {
     display: flex;
     flex-direction: column;
 
+    & > button {
+      position: absolute;
+      display: block;
+      margin: 1rem;
+      width: 200px;
+      text-align: left;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      color: white;
+      background-color: green;
+      font-size: 1rem;
+      transition: 0.2s;
+
+      &:hover {
+        font-size: 1.05rem;
+      }
+
+      & i {
+        width: 20px;
+      }
+    }
+
+    & .loadingSpinner {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     & .userData {
       flex: 0 0 35%;
-      background-color: royalblue;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      & .userDesc {
+        flex: 0 0 50%;
+      }
+      & .userImg {
+        & img {
+          height: 200px;
+        }
+      }
     }
 
     & .userMap {
