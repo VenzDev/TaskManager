@@ -60,8 +60,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import tasks from "@/store/modules/tasks";
 import { TaskModel } from "@/store/models/TaskListModel";
-import MoveTaskModal from "@/components/MoveTaskModal.vue";
-import AssignUserModal from "@/components/AssignUserModal.vue";
+import { AssignUserModal, MoveTaskModal } from "@/components/taskView";
 
 @Component({ components: { MoveTaskModal, AssignUserModal } })
 export default class Task extends Vue {
@@ -141,13 +140,13 @@ export default class Task extends Vue {
   height: 80vh;
   background-color: $color-light;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1100px) {
     width: 90%;
   }
-  @media (max-width: 750px) {
+  @media (max-width: 850px) {
     width: 100%;
   }
-  @media (max-width: 600px) {
+  @media (max-width: 750px) {
     flex-direction: column;
     height: auto;
   }
@@ -217,7 +216,7 @@ export default class Task extends Vue {
     border-left: 1px solid lightgray;
     flex-basis: 30%;
 
-    @media (max-width: 600px) {
+    @media (max-width: 750px) {
       order: -1;
       flex-basis: 20%;
     }
@@ -229,6 +228,8 @@ export default class Task extends Vue {
 
     & button {
       @include primaryButtonWithHover;
+      width: 170px;
+      margin: 1rem auto;
       background-color: red;
     }
   }

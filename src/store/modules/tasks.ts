@@ -6,41 +6,30 @@ import generateID from "@/utils/generateID";
 import UserModel from "../models/UserModel";
 
 interface EditTaskParams {
-  columnIndex: number;
+  columnOrder: number;
   taskId: string;
   text: string;
 }
 
 interface CreateTaskParams {
-  columnIndex: number;
+  columnOrder: number;
   text: string;
 }
 
-interface ToggleFavParams {
-  columnIndex: number;
-  taskIndex: number;
-}
-
-interface RemoveTaskParams {
-  columnIndex: number;
-  taskIndex: number;
-}
-
-interface EditTaskDescriptionParams {
+interface TaskPosition {
   columnOrder: number;
   taskOrder: number;
+}
+
+interface EditTaskDescriptionParams extends TaskPosition {
   description: string;
 }
 
-interface MoveTaskParams {
-  columnOrder: number;
-  taskOrder: number;
+interface MoveTaskParams extends TaskPosition {
   columnId: number;
 }
 
-interface AssignUserParams {
-  columnOrder: number;
-  taskOrder: number;
+interface AssignUserParams extends TaskPosition {
   user: UserModel;
 }
 
@@ -72,7 +61,7 @@ class Tasks extends VuexModule {
   }
 
   @Action({ commit: "updateTasks" })
-  createTask({ columnIndex, text }: CreateTaskParams) {
+  createTask({ columnOrder, text }: CreateTaskParams) {
     const newDate = new Date().toLocaleString();
     const newTask: TaskModel = {
       id: generateID(),
@@ -82,16 +71,16 @@ class Tasks extends VuexModule {
       description: null,
       user: null
     };
-    this.tasksColumns[columnIndex].list.push(newTask);
+    this.tasksColumns[columnOrder].list.push(newTask);
     return this.tasksColumns;
   }
 
   @Action({ commit: "updateTasks" })
-  editTask({ columnIndex, taskId, text }: EditTaskParams) {
-    const task = this.tasksColumns[columnIndex].list.filter(task => task.id === taskId)[0];
+  editTask({ columnOrder, taskId, text }: EditTaskParams) {
+    const task = this.tasksColumns[columnOrder].list.filter(task => task.id === taskId)[0];
     if (task) {
-      const taskIndex = this.tasksColumns[columnIndex].list.indexOf(task);
-      if (taskIndex !== -1) this.tasksColumns[columnIndex].list[taskIndex].text = text;
+      const taskIndex = this.tasksColumns[columnOrder].list.indexOf(task);
+      if (taskIndex !== -1) this.tasksColumns[columnOrder].list[taskIndex].text = text;
     }
     return this.tasksColumns;
   }
@@ -102,8 +91,8 @@ class Tasks extends VuexModule {
     return this.tasksColumns;
   }
   @Action({ commit: "updateTasks" })
-  removeTask({ columnIndex, taskIndex }: RemoveTaskParams) {
-    this.tasksColumns[columnIndex].list.splice(taskIndex, 1);
+  removeTask({ columnOrder, taskOrder }: TaskPosition) {
+    this.tasksColumns[columnOrder].list.splice(taskOrder, 1);
     return this.tasksColumns;
   }
   @Action({ commit: "updateTasks" })
@@ -126,9 +115,9 @@ class Tasks extends VuexModule {
   }
 
   @Action({ commit: "updateTasks" })
-  toggleFavourite({ columnIndex, taskIndex }: ToggleFavParams) {
-    const value = this.tasksColumns[columnIndex].list[taskIndex].favourite;
-    this.tasksColumns[columnIndex].list[taskIndex].favourite = !value;
+  toggleFavourite({ columnOrder, taskOrder }: TaskPosition) {
+    const value = this.tasksColumns[columnOrder].list[taskOrder].favourite;
+    this.tasksColumns[columnOrder].list[taskOrder].favourite = !value;
     return this.tasksColumns;
   }
 

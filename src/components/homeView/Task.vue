@@ -40,23 +40,23 @@ export default class Task extends Vue {
   @Prop() task!: TaskModel;
   @Prop() columnOrder!: number;
   @Prop() taskOrder!: number;
-  editTask: string | null = null;
+  editTaskId: string | null = null;
   editTaskText: string | null = null;
 
   removeTask() {
-    tasks.removeTask({ columnIndex: this.columnOrder, taskIndex: this.taskOrder });
+    tasks.removeTask({ columnOrder: this.columnOrder, taskOrder: this.taskOrder });
   }
   closeEditTaskInput() {
     this.editTaskText = null;
-    this.editTask = null;
+    this.editTaskId = null;
   }
   handleEditTask() {
-    if (this.editTask && this.editTaskText)
-      tasks.editTask({ columnIndex: this.columnOrder, taskId: this.editTask, text: this.editTaskText });
+    if (this.editTaskId && this.editTaskText)
+      tasks.editTask({ columnOrder: this.columnOrder, taskId: this.editTaskId, text: this.editTaskText });
     this.closeEditTaskInput();
   }
   toggleFavourite() {
-    tasks.toggleFavourite({ columnIndex: this.columnOrder, taskIndex: this.taskOrder });
+    tasks.toggleFavourite({ columnOrder: this.columnOrder, taskOrder: this.taskOrder });
   }
 }
 </script>

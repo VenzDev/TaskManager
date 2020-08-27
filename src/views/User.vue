@@ -45,7 +45,7 @@ import { Vue, Component } from "vue-property-decorator";
 import tasks from "@/store/modules/tasks";
 import { TaskModel } from "@/store/models/TaskListModel";
 import { getUser } from "@/store/api";
-import UserMap from "@/components/UserMap.vue";
+import { UserMap } from "@/components/userView";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import UserModel from "@/store/models/UserModel";
 
@@ -91,6 +91,15 @@ export default class User extends Vue {
   height: 85vh;
   background-color: $color-light;
 
+  @media (max-width: 1000px) {
+    width: 100%;
+  }
+
+  @media (max-width: 850px) {
+    flex-direction: column;
+    height: auto;
+  }
+
   & .userInfo {
     flex: 0 0 70%;
     display: flex;
@@ -126,6 +135,10 @@ export default class User extends Vue {
     & .userMap {
       flex: 0 0 65%;
       background-color: salmon;
+
+      @media (max-width: 850px) {
+        height: 300px;
+      }
     }
   }
   & .userTasks {

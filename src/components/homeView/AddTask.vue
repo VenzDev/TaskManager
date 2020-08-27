@@ -25,7 +25,7 @@ export default class AddTask extends Vue {
 
   createNewTask() {
     if (this.newTask && this.newTask.trim()) {
-      tasks.createTask({ columnIndex: this.columnOrder, text: this.newTask });
+      tasks.createTask({ columnOrder: this.columnOrder, text: this.newTask });
       this.closeCreateTaskInput();
     }
   }
