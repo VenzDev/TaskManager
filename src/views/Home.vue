@@ -12,44 +12,13 @@
       <h2 class="listName">{{ column.text }}</h2>
       <div class="tasksContainer">
         <Draggable @start="start" @end="end" :list="column.list" v-bind="dragOptions" group="tasks">
-          <div
-            class="task"
-            :class="{ favourite: task.favourite }"
-            v-for="(task, taskIndex) in column.list"
+          <Task
+            v-for="(task, taskOrder) in column.list"
             :key="task.id"
-          >
-            <router-link tag="p" v-if="editTask !== task.id" :to="`/task/${task.id}`">
-              {{ task.text }}
-            </router-link>
-            <input v-else v-model="editTaskText" type="text" />
-            <router-link tag="p" v-if="task.user" :to="`/user/${task.user.id}`">
-              {{ task.user.first_name + " " + task.user.last_name }}
-            </router-link>
-            <div class="taskOptions" v-if="task.date">
-              <p>{{ task.date }}</p>
-              <div class="optionsContainer">
-                <p>
-                  <i
-                    @click="
-                      editTask = task.id;
-                      editTaskText = task.text;
-                    "
-                    v-if="editTask !== task.id"
-                    class="fas fa-edit"
-                  ></i>
-                  <i @click="handleEditTask(colIndex)" v-else style="color:green;" class="fas fa-check"></i>
-                </p>
-                <p>
-                  <i
-                    @click="toggleFavourite(colIndex, taskIndex)"
-                    :class="{ favourite: task.favourite }"
-                    class="far fa-star"
-                  ></i>
-                </p>
-                <p><i @click="removeTask(colIndex, taskIndex)" class="far fa-trash-alt"></i></p>
-              </div>
-            </div>
-          </div>
+            :task="task"
+            :taskOrder="taskOrder"
+            :columnOrder="colIndex"
+          />
         </Draggable>
       </div>
       <div class="addTask">
@@ -74,8 +43,9 @@ import { Vue, Component } from "vue-property-decorator";
 import Draggable from "vuedraggable";
 import DraggableEvent from "@/store/models/DraggableEvent";
 import tasks from "@/store/modules/tasks";
+import Task from "@/components/Task.vue";
 
-@Component({ components: { Draggable } })
+@Component({ components: { Draggable, Task } })
 export default class Home extends Vue {
   createNewId: number | null = null;
   newTask: string | null = null;
