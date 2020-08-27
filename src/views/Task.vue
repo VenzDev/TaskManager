@@ -37,7 +37,9 @@
         <p v-if="!task.user">Nie przydzielono użytkownika do zadania</p>
         <div v-else class="userDesc">
           <div>
-            <p>{{ task.user.first_name + " " + task.user.last_name }}</p>
+            <router-link class="userName" tag="p" :to="`/user/${task.user.id}`">{{
+              task.user.first_name + " " + task.user.last_name
+            }}</router-link>
             <p>{{ task.user.email }}</p>
             <p>{{ task.user.job_title }}</p>
             <p>{{ task.user.city }}</p>
@@ -202,8 +204,18 @@ export default class Task extends Vue {
       justify-content: space-between;
       align-items: center;
 
+      @media (max-width: 600px) {
+        flex-direction: column;
+      }
+
       & div {
         flex: 0 0 50%;
+      }
+
+      & .userName {
+        color: blue;
+        font-weight: bold;
+        cursor: pointer;
       }
     }
 
