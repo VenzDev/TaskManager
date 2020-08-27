@@ -80,6 +80,7 @@ export default class AssignUserModal extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/config.scss";
 .assignUserModal {
   height: 500px;
 
@@ -161,18 +162,7 @@ export default class AssignUserModal extends Vue {
     transform: translateX(-50%);
 
     & button {
-      padding: 0.5rem;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-left: 1rem;
-      background-color: green;
-      color: white;
-      border: 1px solid black;
-
-      &:first-child {
-        padding: 0.5rem 1rem;
-        background-color: red;
-      }
+      @include submitButton;
     }
   }
 }

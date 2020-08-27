@@ -60,6 +60,7 @@ export default class MoveTaskModal extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/config.scss";
 .moveTaskModal {
   & h2 {
     text-align: center;
@@ -89,18 +90,7 @@ export default class MoveTaskModal extends Vue {
     justify-content: center;
 
     & button {
-      padding: 0.5rem;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-left: 1rem;
-      background-color: green;
-      color: white;
-      border: 1px solid black;
-
-      &:first-child {
-        padding: 0.5rem 1rem;
-        background-color: red;
-      }
+      @include submitButton;
     }
   }
 }

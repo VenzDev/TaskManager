@@ -1,2 +1,13 @@
 $color-light: #f1faee;
 $color-blue: #3a86ff;
+
+$shadow-lt: 0px 6px 12px
+  rgba(
+    $color: #000000,
+    $alpha: 0.25
+  );
+$shadow-md: 0px 6px 12px
+  rgba(
+    $color: #000000,
+    $alpha: 0.5
+  );

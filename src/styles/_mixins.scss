@@ -1,0 +1,42 @@
+@mixin primaryButton {
+  display: block;
+  margin: 1rem;
+  width: 200px;
+  text-align: left;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  color: white;
+  background-color: green;
+  font-size: 1rem;
+  transition: 0.2s;
+
+  & i {
+    width: 20px;
+  }
+}
+
+@mixin primaryButtonWithHover {
+  @include primaryButton();
+
+  &:hover {
+    font-size: 1.05rem;
+  }
+}
+
+@mixin submitButton {
+  padding: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 1rem;
+  background-color: green;
+  color: white;
+  border: 1px solid black;
+
+  &:first-child {
+    padding: 0.5rem 1rem;
+    background-color: red;
+  }
+}

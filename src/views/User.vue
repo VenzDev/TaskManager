@@ -87,7 +87,7 @@ export default class User extends Vue {
   left: 50%;
   transform: translateX(-50%);
   border-radius: 6px;
-  box-shadow: 0px 6px 12px rgba($color: #000000, $alpha: 0.25);
+  box-shadow: $shadow-lt;
   height: 85vh;
   background-color: $color-light;
 
@@ -97,28 +97,8 @@ export default class User extends Vue {
     flex-direction: column;
 
     & > button {
+      @include primaryButtonWithHover;
       position: absolute;
-      display: block;
-      margin: 1rem;
-      width: 200px;
-      text-align: left;
-      padding: 0.5rem;
-      margin-bottom: 0.5rem;
-      border-radius: 6px;
-      cursor: pointer;
-      border: none;
-      color: white;
-      background-color: green;
-      font-size: 1rem;
-      transition: 0.2s;
-
-      &:hover {
-        font-size: 1.05rem;
-      }
-
-      & i {
-        width: 20px;
-      }
     }
 
     & .loadingSpinner {
@@ -168,11 +148,11 @@ export default class User extends Vue {
       margin: 1rem auto;
       padding-left: 1rem;
       border-radius: 6px;
-      box-shadow: 0px 6px 12px rgba($color: #000000, $alpha: 0.25);
+      box-shadow: $shadow-lt;
       transition: 0.2s;
 
       &:hover {
-        box-shadow: 0px 6px 12px rgba($color: #000000, $alpha: 0.5);
+        box-shadow: $shadow-md;
       }
     }
   }

@@ -157,27 +157,7 @@ export default class Task extends Vue {
     flex-basis: 70%;
 
     & > button {
-      display: block;
-      margin: 1rem;
-      width: 200px;
-      text-align: left;
-      padding: 0.5rem;
-      margin-bottom: 0.5rem;
-      border-radius: 6px;
-      cursor: pointer;
-      border: none;
-      color: white;
-      background-color: green;
-      font-size: 1rem;
-      transition: 0.2s;
-
-      &:hover {
-        font-size: 1.05rem;
-      }
-
-      & i {
-        width: 20px;
-      }
+      @include primaryButtonWithHover;
     }
     & .textareaWrapper {
       margin: 0 1rem;
@@ -207,15 +187,10 @@ export default class Task extends Vue {
       margin-right: 1rem;
 
       & button {
-        padding: 0.5rem;
-        cursor: pointer;
-        border: none;
-        color: white;
-        background-color: green;
-        margin-top: 1rem;
-        margin-left: 1rem;
-        border-radius: 6px;
-        padding: 0.5rem 1rem;
+        @include primaryButton;
+        margin: 0.5rem;
+        width: auto;
+        text-align: center;
 
         &:last-child {
           background-color: red;
@@ -253,27 +228,8 @@ export default class Task extends Vue {
     }
 
     & button {
-      display: block;
-      margin: 0 auto;
-      width: 180px;
-      text-align: left;
-      padding: 0.5rem;
-      margin-bottom: 0.5rem;
-      border-radius: 6px;
-      cursor: pointer;
-      border: none;
-      color: white;
+      @include primaryButtonWithHover;
       background-color: red;
-      font-size: 1rem;
-      transition: 0.2s;
-
-      &:hover {
-        font-size: 1.05rem;
-      }
-
-      & i {
-        width: 20px;
-      }
     }
   }
 }
