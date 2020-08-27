@@ -40,3 +40,14 @@
     background-color: red;
   }
 }
+
+@mixin customScrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+    background-color: lightgray;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-radius: 6px;
+  }
+}

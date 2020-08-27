@@ -1,10 +1,10 @@
 <template>
   <div class="task" :class="{ favourite: task.favourite }">
-    <router-link tag="p" v-if="editTask !== task.id" :to="`/task/${task.id}`">
+    <router-link class="taskName" tag="p" v-if="editTask !== task.id" :to="`/task/${task.id}`">
       {{ task.text }}
     </router-link>
     <input v-else v-model="editTaskText" type="text" />
-    <router-link tag="p" v-if="task.user" :to="`/user/${task.user.id}`">
+    <router-link class="taskUser" tag="p" v-if="task.user" :to="`/user/${task.user.id}`">
       {{ task.user.first_name + " " + task.user.last_name }}
     </router-link>
     <div class="taskOptions" v-if="task.date">
@@ -70,6 +70,15 @@ export default class Task extends Vue {
   margin: 1rem;
   border-radius: 6px;
   cursor: grab;
+
+  & .taskName {
+    font-weight: bold;
+  }
+
+  & .taskName:hover,
+  & .taskUser:hover {
+    color: blue;
+  }
 
   & input {
     width: 100%;
