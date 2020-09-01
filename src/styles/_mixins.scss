@@ -44,10 +44,10 @@
 @mixin customScrollbar {
   &::-webkit-scrollbar {
     width: 6px;
-    background-color: lightgray;
+    background-color: white;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: gray;
+    background-color: lightgray;
     border-radius: 6px;
   }
 }

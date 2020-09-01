@@ -9,8 +9,16 @@
     class="columnsContainer"
   >
     <Column :columnName="column.text" v-for="(column, columnOrder) in tasksColumns" :key="column.id">
-      <div class="tasksContainer" :id="column.id">
-        <Draggable @start="start" @end="end" :move="checkMove" :list="column.list" v-bind="dragOptions" group="tasks">
+      <Draggable
+        @start="start"
+        @end="end"
+        :move="checkMove"
+        :list="column.list"
+        v-bind="dragOptions"
+        group="tasks"
+        :id="column.id"
+      >
+        <transition-group name="list" class="tasksContainer" tag="div">
           <Task
             :id="task.user ? task.user.job_title : null"
             v-for="(task, taskOrder) in column.list"
@@ -19,9 +27,15 @@
             :taskOrder="taskOrder"
             :columnOrder="columnOrder"
           />
-        </Draggable>
-      </div>
-      <AddTask :columnOrder="columnOrder" />
+        </transition-group>
+      </Draggable>
+
+      <AddTask
+        :selectedColumnId="selectedColumnId"
+        :selectColumnId="selectColumnId"
+        :columnId="column.id"
+        :columnOrder="columnOrder"
+      />
     </Column>
   </Draggable>
 </template>
@@ -34,12 +48,19 @@ import tasks from "@/store/modules/tasks";
 import searchbox from "@/store/modules/searchbox";
 import { Column, AddTask, Task } from "@/components/homeView";
 import { TaskListModel } from "@/store/models/TaskListModel";
-import { list, PROJECT_MANAGER } from "@/store/initTasks";
+import { list, PROJECT_MANAGER, TASK_ADDED } from "@/store/initTasks";
 import UserModel from "@/store/models/UserModel";
+import SmoothHeight from "@/components/smoothHeight.vue";
 
-@Component({ components: { Draggable, Task, AddTask, Column } })
+@Component({ components: { Draggable, Task, AddTask, Column, SmoothHeight } })
 export default class Home extends Vue {
   selectedUser: UserModel | null = null;
+  selectedColumnId: number | null = null;
+  copy: Array<TaskListModel> | null = null;
+
+  selectColumnId(selectedColumnId: number | null) {
+    this.selectedColumnId = selectedColumnId;
+  }
 
   get dragOptions() {
     return {
@@ -49,6 +70,7 @@ export default class Home extends Vue {
   }
 
   get allTasks() {
+    this.copy = tasks.allTasks;
     return tasks.allTasks;
   }
 
@@ -84,7 +106,7 @@ export default class Home extends Vue {
     tasks.changeTasks(this.allTasks);
   }
   checkMove(e: DraggableEvent) {
-    if (parseInt(e.to.parentElement.id) === list.DONE && e.dragged.id !== PROJECT_MANAGER) return false;
+    if (parseInt(e.to.id) === list.DONE && e.dragged.id !== PROJECT_MANAGER) return false;
     return true;
   }
 }
@@ -92,6 +114,16 @@ export default class Home extends Vue {
 
 <style lang="scss" scoped>
 @import "@/styles/config.scss";
+
+.list-enter-active {
+  transition: opacity 0.5s;
+}
+.list-enter {
+  opacity: 0;
+}
+.list-leave-active {
+  display: none !important;
+}
 
 .columnsContainer {
   display: flex;
@@ -106,68 +138,12 @@ export default class Home extends Vue {
   }
 
   .tasksContainer {
-    background-color: lightgray;
     min-height: 50px;
     max-height: 69vh;
     overflow-x: hidden;
     overflow-y: auto;
     padding: 1rem 0;
-    box-shadow: 0px 6px 12px 4px rgba(0, 0, 0, 0.25) inset;
     @include customScrollbar;
-
-    & > div {
-      min-height: 50px;
-    }
-    & .task {
-      background-color: $color-light;
-      padding: 1rem;
-      margin: 1rem;
-      border-radius: 6px;
-      cursor: grab;
-
-      & input {
-        width: 100%;
-        font-size: 1rem;
-        border: none;
-        margin: 0.3rem 0;
-        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25) inset;
-      }
-
-      &.favourite {
-        border-left: 4px solid blue;
-      }
-
-      & > p {
-        cursor: pointer;
-        word-wrap: break-word;
-        margin: 0.3rem 0;
-      }
-
-      & .taskOptions {
-        font-size: 0.8rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-
-        & .optionsContainer {
-          margin-top: 0.5rem;
-          display: flex;
-
-          & .favourite {
-            color: blue;
-          }
-
-          & p {
-            flex-basis: 33.33%;
-            text-align: center;
-            font-size: 1rem;
-            &:hover {
-              cursor: pointer;
-            }
-          }
-        }
-      }
-    }
   }
 }
 .hide {

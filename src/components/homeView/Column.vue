@@ -16,11 +16,12 @@ export default class Column extends Vue {
 
 <style lang="scss" scoped>
 @import "@/styles/config.scss";
+
 .column {
   flex: 0 0 18%;
   border-radius: 6px;
-  background-color: $color-light;
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+  background-color: #fff;
+  box-shadow: 0 0 60px 0 #e4e7eb;
 
   @media (max-width: 1000px) {
     flex: 0 0 250px;
@@ -28,8 +29,10 @@ export default class Column extends Vue {
   }
 
   & .columnName {
+    font-weight: normal;
     cursor: grab;
     padding: 1rem;
+    border-bottom: 1px solid lightgray;
   }
 }
 </style>

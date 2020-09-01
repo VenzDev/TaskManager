@@ -1,5 +1,5 @@
 <template>
-  <div class="task" :class="{ favourite: task.favourite }">
+  <div class="task" :class="{ favourite: task.favourite, delete: deletingTask }">
     <router-link class="taskName" tag="p" v-if="editTaskId !== task.id" :to="`/task/${task.id}`">
       {{ task.text }}
     </router-link>
@@ -10,21 +10,20 @@
     <div class="taskOptions" v-if="task.date">
       <p>{{ task.date }}</p>
       <div class="optionsContainer">
-        <p>
-          <i
-            @click="
-              editTaskId = task.id;
-              editTaskText = task.text;
-            "
-            v-if="editTaskId !== task.id"
-            class="fas fa-edit"
-          ></i>
-          <i @click="handleEditTask" v-else style="color:green;" class="fas fa-check"></i>
+        <p
+          v-if="editTaskId !== task.id"
+          @click="
+            editTaskId = task.id;
+            editTaskText = task.text;
+          "
+        >
+          <i class="fas fa-edit"></i>
         </p>
-        <p>
-          <i @click="toggleFavourite" :class="{ favourite: task.favourite }" class="far fa-star"></i>
+        <p @click="handleEditTask" v-else><i class="fas fa-check"></i></p>
+        <p @click="toggleFavourite">
+          <i :class="{ favourite: task.favourite }" class="far fa-star"></i>
         </p>
-        <p><i @click="removeTask" class="far fa-trash-alt"></i></p>
+        <p @click="removeTask"><i class="far fa-trash-alt"></i></p>
       </div>
     </div>
   </div>
@@ -42,9 +41,13 @@ export default class Task extends Vue {
   @Prop() taskOrder!: number;
   editTaskId: string | null = null;
   editTaskText: string | null = null;
+  deletingTask = false;
 
   removeTask() {
-    tasks.removeTask({ columnOrder: this.columnOrder, taskOrder: this.taskOrder });
+    this.deletingTask = true;
+    setTimeout(() => {
+      tasks.removeTask({ columnOrder: this.columnOrder, taskOrder: this.taskOrder });
+    }, 300);
   }
   closeEditTaskInput() {
     this.editTaskText = null;
@@ -65,14 +68,36 @@ export default class Task extends Vue {
 @import "@/styles/config.scss";
 
 .task {
-  background-color: $color-light;
+  background-color: #fff;
   padding: 1rem;
   margin: 1rem;
   border-radius: 6px;
+  border: 1px solid lightgray;
+  position: relative;
+  overflow: hidden;
   cursor: grab;
+  transition: opacity 0.3s;
+
+  &::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 0;
+    width: 6px;
+    background-color: blue;
+    transition: height 0.2s;
+  }
+
+  &.delete {
+    opacity: 0;
+  }
 
   & .taskName {
-    font-weight: bold;
+    font-family: "Fira Sans", sans-serif;
+    padding: 0.3rem;
+    padding-left: 0;
   }
 
   & .taskName:hover,
@@ -85,11 +110,16 @@ export default class Task extends Vue {
     font-size: 1rem;
     border: none;
     margin: 0.3rem 0;
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25) inset;
+    padding: 0.3rem;
+    border-radius: 6px;
+    box-shadow: 0px 0px 0px 1px lightgray;
+    padding-left: 0;
+    text-indent: 0.3rem;
+    outline: none;
   }
 
-  &.favourite {
-    border-left: 4px solid blue;
+  &.favourite::after {
+    height: 100%;
   }
 
   & > p {
@@ -107,17 +137,24 @@ export default class Task extends Vue {
     & .optionsContainer {
       margin-top: 0.5rem;
       display: flex;
-
-      & .favourite {
-        color: blue;
-      }
+      justify-content: space-around;
 
       & p {
-        flex-basis: 33.33%;
+        background-color: blue;
+        flex: 0 0 20%;
+        height: 30px;
+        line-height: 30px;
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0px 4px 8px rgba($color: blue, $alpha: 0.5);
+
         text-align: center;
         font-size: 1rem;
+
+        transition: 0.2s;
         &:hover {
           cursor: pointer;
+          box-shadow: 0px 6px 10px rgba($color: blue, $alpha: 0.8);
         }
       }
     }

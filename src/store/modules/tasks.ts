@@ -71,7 +71,7 @@ class Tasks extends VuexModule {
       description: null,
       user: null
     };
-    this.tasksColumns[columnOrder].list.push(newTask);
+    this.tasksColumns[columnOrder].list.unshift(newTask);
     return this.tasksColumns;
   }
 

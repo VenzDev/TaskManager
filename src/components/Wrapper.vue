@@ -15,8 +15,7 @@ export default class Wrapper extends Vue {}
 
 <style lang="scss" scoped>
 .app {
-  background: #00afff;
-  background-image: linear-gradient(to bottom, #3a86ff, #009cff, #00afff, #00bff7, #12cdeb);
+  background-color: #f3f5f8;
 }
 
 .container {

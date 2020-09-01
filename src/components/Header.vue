@@ -72,14 +72,14 @@ export default class Header extends Vue {
   display: flex;
   height: 50px;
   align-items: center;
-  background-color: transparent;
+  background-color: white;
 
   & > p {
-    font-family: "Montserrat";
-    color: white;
+    font-family: "Fira Sans", sans-serif;
+    font-weight: normal;
+    color: Black;
     font-size: 2rem;
     margin-left: 2rem;
-    font-weight: bold;
     line-height: 50px;
     cursor: pointer;
   }
