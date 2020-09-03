@@ -5,7 +5,7 @@
     </router-link>
     <input v-else v-model="editTaskText" type="text" />
     <router-link class="taskUser" tag="p" v-if="task.user" :to="`/user/${task.user.id}`">
-      {{ task.user.first_name + " " + task.user.last_name }}
+      {{ `${task.user.first_name} ${task.user.last_name}` }}
     </router-link>
     <div class="taskOptions" v-if="task.date">
       <p>{{ task.date }}</p>
@@ -110,6 +110,7 @@ export default class Task extends Vue {
   .taskUser:hover {
     color: $color-blue;
   }
+
   .taskUser {
     font-size: 0.8rem;
     font-weight: bold;

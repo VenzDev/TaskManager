@@ -123,7 +123,7 @@ export default class Header extends Vue {
         outline: none;
 
         &:focus {
-          border: 1px solid blue;
+          border: 1px solid $color-blue;
         }
       }
 

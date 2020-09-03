@@ -285,8 +285,6 @@ export default class AssignUserModal extends Vue {
 .fade-enter-active {
   transition: opacity 0.25s ease;
 }
-.fade-leave {
-}
 .fade-leave-active {
   transition: opacity 0.25s ease;
   opacity: 0;

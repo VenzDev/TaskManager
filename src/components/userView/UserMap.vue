@@ -26,6 +26,7 @@ L.Icon.Default.mergeOptions({
 export default class UserMap extends Vue {
   @Prop() userLat!: number;
   @Prop() userLng!: number;
+
   zoom = 3;
   center = L.latLng(47.41322, -1.219482);
   url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";

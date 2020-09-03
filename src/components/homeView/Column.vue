@@ -20,7 +20,7 @@ export default class Column extends Vue {
 .column {
   flex: 0 0 18%;
   border-radius: 6px;
-  background-color: white;
+  background-color: $color-white;
   box-shadow: 10px 20px 30px 0 $color-colShadow;
 
   @media (max-width: 1000px) {

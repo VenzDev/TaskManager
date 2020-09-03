@@ -6,6 +6,7 @@ export const getUsers = async () => {
   const fetchedData = await axios.get(url);
   return fetchedData.data;
 };
+
 export const getUser = async (id: number) => {
   const { data } = await axios.get(url);
   return data.find((user: UserModel) => user.id === id);
