@@ -21,7 +21,7 @@ export default class Column extends Vue {
   flex: 0 0 18%;
   border-radius: 6px;
   background-color: white;
-  box-shadow: 10px 20px 30px 0 #e4e7eb;
+  box-shadow: 10px 20px 30px 0 $color-colShadow;
 
   @media (max-width: 1000px) {
     flex: 0 0 250px;
@@ -32,7 +32,7 @@ export default class Column extends Vue {
     font-weight: normal;
     cursor: grab;
     padding: 1rem;
-    border-bottom: 1px solid lightgray;
+    border-bottom: 1px solid $color-light;
   }
 }
 </style>

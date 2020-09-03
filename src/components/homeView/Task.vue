@@ -108,7 +108,7 @@ export default class Task extends Vue {
 
   .taskName:hover,
   .taskUser:hover {
-    color: blue;
+    color: $color-blue;
   }
   .taskUser {
     font-size: 0.8rem;
@@ -122,7 +122,7 @@ export default class Task extends Vue {
     margin: 0.3rem 0;
     padding: 0.3rem;
     border-radius: 6px;
-    box-shadow: 0px 0px 0px 1px lightgray;
+    box-shadow: 0px 0px 0px 1px $color-light;
     padding-left: 0;
     text-indent: 0.3rem;
     outline: none;

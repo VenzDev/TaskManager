@@ -50,7 +50,7 @@ export default class AddTask extends Vue {
 @import "@/styles/config.scss";
 
 .addTask {
-  border-top: 1px solid lightgray;
+  border-top: 1px solid $color-light;
   padding: 0.5rem;
   text-align: center;
 
@@ -91,7 +91,7 @@ export default class AddTask extends Vue {
 
       input {
         width: 100%;
-        color: blue;
+        color: $color-blue;
         height: 30px;
         box-sizing: border-box;
         outline: none;

@@ -8,5 +8,5 @@ export const getUsers = async () => {
 };
 export const getUser = async (id: number) => {
   const { data } = await axios.get(url);
-  return data.filter((user: UserModel) => user.id === id)[0];
+  return data.find((user: UserModel) => user.id === id);
 };

@@ -87,8 +87,8 @@ export default class User extends Vue {
   left: 50%;
   transform: translateX(-50%);
   border-radius: 6px;
-  background-color: white;
-  box-shadow: $shadow-lt;
+  background-color: $color-white;
+  box-shadow: $shadow-dark;
   height: 85vh;
 
   @media (max-width: 1000px) {
@@ -100,12 +100,12 @@ export default class User extends Vue {
     height: auto;
   }
 
-  & .userInfo {
+  .userInfo {
     flex: 0 0 70%;
     display: flex;
     flex-direction: column;
 
-    & > button {
+    > button {
       @include blueButton;
       outline: none;
       border: none;
@@ -114,14 +114,14 @@ export default class User extends Vue {
       position: absolute;
     }
 
-    & .loadingSpinner {
+    .loadingSpinner {
       height: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    & .userData {
+    .userData {
       flex: 0 0 40%;
       padding: 0 2rem;
       display: flex;
@@ -136,7 +136,7 @@ export default class User extends Vue {
         font-size: 0.8rem;
       }
 
-      & .userDesc {
+      .userDesc {
         flex: 0 0 50%;
 
         @media (max-width: 500px) {
@@ -146,16 +146,18 @@ export default class User extends Vue {
         i {
           width: 30px;
         }
+
         > p:first-child {
           color: $color-blue;
           margin-bottom: 0.5rem;
         }
+
         > p {
           margin-bottom: 0.2rem;
         }
       }
-      & .userImg {
-        & img {
+      .userImg {
+        img {
           height: 200px;
 
           @media (max-width: 500px) {
@@ -165,7 +167,7 @@ export default class User extends Vue {
       }
     }
 
-    & .userMap {
+    .userMap {
       flex: 0 0 60%;
       z-index: 1;
 
@@ -174,28 +176,28 @@ export default class User extends Vue {
       }
     }
   }
-  & .userTasks {
+  .userTasks {
     flex: 0 0 30%;
-    background-color: white;
+    background-color: $color-white;
     border-left: 1px solid $color-light;
     box-shadow: 2px 8px 16px rgba($color: #000000, $alpha: 0.4);
     z-index: 10;
     padding: 1rem;
     overflow-y: auto;
 
-    & h2 {
+    h2 {
       font-weight: normal;
       text-align: center;
       margin-bottom: 1rem;
     }
 
-    & .task {
+    .task {
       display: flex;
       flex-direction: column;
       justify-content: center;
       width: 80%;
       height: 50px;
-      background-color: white;
+      background-color: $color-white;
       margin: 1rem auto;
       padding-left: 1rem;
       border-radius: 6px;
@@ -207,7 +209,7 @@ export default class User extends Vue {
       }
 
       &:hover {
-        box-shadow: $shadow-lt;
+        box-shadow: $shadow-dark;
       }
     }
   }

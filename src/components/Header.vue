@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <router-link tag="p" to="/"><i class="fas fa-sticky-note"></i> Task Manager</router-link>
-    <div v-if="homeUrl" class="searchContainer">
+    <div v-if="isHomeUrl" class="searchContainer">
       <span>Pokaż zadania dla użytkownika:</span>
       <div class="search">
         <input class="searchbox" v-model="searchValue" placeholder="Szukaj..." type="text" />
@@ -33,7 +33,7 @@ export default class Header extends Vue {
   users: Array<UserModel> = [];
   selectedUser: UserModel | null = null;
 
-  get homeUrl() {
+  get isHomeUrl() {
     if (this.$route.path === "/") return true;
     return false;
   }
@@ -77,11 +77,11 @@ export default class Header extends Vue {
   display: flex;
   height: 50px;
   align-items: center;
-  background-color: white;
+  background-color: $color-white;
 
   > p {
     font-weight: normal;
-    color: Black;
+    color: $color-black;
     font-size: 2rem;
     margin-left: 2rem;
     line-height: 50px;
@@ -118,7 +118,7 @@ export default class Header extends Vue {
         background: transparent;
         padding: 8px 32px 8px 12px;
         height: 30px;
-        border: 1px solid #e6ecf0;
+        border: 1px solid $color-body;
         border-radius: 50px;
         outline: none;
 
@@ -131,9 +131,9 @@ export default class Header extends Vue {
         position: absolute;
         width: 100%;
         margin-top: 0.5rem;
-        background-color: rgb(248, 248, 248);
+        background-color: $color-light;
         border-radius: 6px;
-        box-shadow: 0px 6px 12px rgba($color: #000000, $alpha: 0.25);
+        box-shadow: 0px 6px 12px rgba($color: $color-black, $alpha: 0.25);
 
         .result {
           display: flex;
@@ -141,12 +141,12 @@ export default class Header extends Vue {
           justify-content: space-between;
           padding: 0 1rem;
           height: 30px;
-          border-bottom: 1px solid lightgray;
+          border-bottom: 1px solid $color-light;
           cursor: pointer;
           transition: 0.2s;
 
           &:hover {
-            color: blue;
+            color: $color-blue;
           }
         }
       }
