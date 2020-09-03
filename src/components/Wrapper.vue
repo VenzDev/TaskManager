@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <Header />
-    <slot class="container" />
+    <slot />
   </div>
 </template>
 
@@ -14,11 +14,8 @@ export default class Wrapper extends Vue {}
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/config.scss";
 .app {
-  background-color: #f3f5f8;
-}
-
-.container {
-  min-height: calc(100vh - 50px);
+  background-color: $color-body;
 }
 </style>

@@ -39,6 +39,7 @@ export default class Task extends Vue {
   @Prop() task!: TaskModel;
   @Prop() columnOrder!: number;
   @Prop() taskOrder!: number;
+
   editTaskId: string | null = null;
   editTaskText: string | null = null;
   deletingTask = false;
@@ -49,15 +50,18 @@ export default class Task extends Vue {
       tasks.removeTask({ columnOrder: this.columnOrder, taskOrder: this.taskOrder });
     }, 300);
   }
+
   closeEditTaskInput() {
     this.editTaskText = null;
     this.editTaskId = null;
   }
+
   handleEditTask() {
     if (this.editTaskId && this.editTaskText)
       tasks.editTask({ columnOrder: this.columnOrder, taskId: this.editTaskId, text: this.editTaskText });
     this.closeEditTaskInput();
   }
+
   toggleFavourite() {
     tasks.toggleFavourite({ columnOrder: this.columnOrder, taskOrder: this.taskOrder });
   }
@@ -68,11 +72,10 @@ export default class Task extends Vue {
 @import "@/styles/config.scss";
 
 .task {
-  background-color: #fff;
   padding: 1rem;
   margin: 1rem;
   border-radius: 6px;
-  border: 1px solid lightgray;
+  border: 1px solid $color-light;
   position: relative;
   overflow: hidden;
   cursor: grab;
@@ -86,26 +89,33 @@ export default class Task extends Vue {
     bottom: 0;
     height: 0;
     width: 6px;
-    background-color: blue;
+    background-color: $color-blue;
     transition: height 0.2s;
+  }
+
+  &.favourite::after {
+    height: 100%;
   }
 
   &.delete {
     opacity: 0;
   }
 
-  & .taskName {
-    font-family: "Fira Sans", sans-serif;
+  .taskName {
     padding: 0.3rem;
     padding-left: 0;
   }
 
-  & .taskName:hover,
-  & .taskUser:hover {
+  .taskName:hover,
+  .taskUser:hover {
     color: blue;
   }
+  .taskUser {
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
 
-  & input {
+  input {
     width: 100%;
     font-size: 1rem;
     border: none;
@@ -118,44 +128,29 @@ export default class Task extends Vue {
     outline: none;
   }
 
-  &.favourite::after {
-    height: 100%;
-  }
-
-  & > p {
+  > p {
     cursor: pointer;
     word-wrap: break-word;
     margin: 0.3rem 0;
   }
 
-  & .taskOptions {
+  .taskOptions {
     font-size: 0.8rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
-    & .optionsContainer {
+    .optionsContainer {
       margin-top: 0.5rem;
       display: flex;
       justify-content: space-around;
 
-      & p {
-        background-color: blue;
+      > p {
+        @include blueButton;
         flex: 0 0 20%;
         height: 30px;
         line-height: 30px;
-        color: white;
-        border-radius: 12px;
-        box-shadow: 0px 4px 8px rgba($color: blue, $alpha: 0.5);
-
         text-align: center;
-        font-size: 1rem;
-
-        transition: 0.2s;
-        &:hover {
-          cursor: pointer;
-          box-shadow: 0px 6px 10px rgba($color: blue, $alpha: 0.8);
-        }
       }
     }
   }

@@ -5,12 +5,14 @@
       <span>Pokaż zadania dla użytkownika:</span>
       <div class="search">
         <input class="searchbox" v-model="searchValue" placeholder="Szukaj..." type="text" />
-        <div class="searchResults">
-          <div @click="selectUser(user)" v-for="user in filteredUsers" :key="user.id" class="result">
-            <p>{{ user.first_name + " " + user.last_name }}</p>
-            <p><i class="fas fa-user"></i></p>
+        <transition name="searchbox">
+          <div v-if="filteredUsers.length > 0" class="searchResults">
+            <div @click="selectUser(user)" v-for="user in filteredUsers" :key="user.id" class="result">
+              <p>{{ `${user.first_name} ${user.last_name}` }}</p>
+              <p><i class="fas fa-user"></i></p>
+            </div>
           </div>
-        </div>
+        </transition>
       </div>
       <span @click="removeUser" class="selectedUser" v-if="selectedUser"
         >{{ `${selectedUser.first_name} ${selectedUser.last_name} ` }}<i class="fas fa-times"></i
@@ -45,6 +47,7 @@ export default class Header extends Vue {
     searchbox.updateUser(user);
     this.searchValue = "";
   }
+
   removeUser() {
     this.selectedUser = null;
     searchbox.updateUser(null);
@@ -68,14 +71,15 @@ export default class Header extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/config.scss";
+
 .header {
   display: flex;
   height: 50px;
   align-items: center;
   background-color: white;
 
-  & > p {
-    font-family: "Fira Sans", sans-serif;
+  > p {
     font-weight: normal;
     color: Black;
     font-size: 2rem;
@@ -83,7 +87,8 @@ export default class Header extends Vue {
     line-height: 50px;
     cursor: pointer;
   }
-  & .searchContainer {
+
+  .searchContainer {
     display: flex;
     align-items: center;
     margin-left: 200px;
@@ -96,37 +101,33 @@ export default class Header extends Vue {
       display: none;
     }
 
-    & .selectedUser {
+    .selectedUser {
       margin-left: 1rem;
       cursor: pointer;
     }
 
-    & span {
-      color: white;
-    }
-    & .search {
+    .search {
       margin-left: 20px;
       width: 250px;
       position: relative;
 
-      & .searchbox {
+      .searchbox {
         transition: border 0.2s linear;
         font-size: 1rem;
         width: 100%;
         background: transparent;
-        color: white;
         padding: 8px 32px 8px 12px;
         height: 30px;
         border: 1px solid #e6ecf0;
         border-radius: 50px;
         outline: none;
 
-        &::placeholder {
-          color: white;
+        &:focus {
+          border: 1px solid blue;
         }
       }
 
-      & .searchResults {
+      .searchResults {
         position: absolute;
         width: 100%;
         margin-top: 0.5rem;
@@ -134,7 +135,7 @@ export default class Header extends Vue {
         border-radius: 6px;
         box-shadow: 0px 6px 12px rgba($color: #000000, $alpha: 0.25);
 
-        & .result {
+        .result {
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -151,5 +152,16 @@ export default class Header extends Vue {
       }
     }
   }
+}
+
+.searchbox-enter-active,
+.searchbox-leave-active {
+  transition: 0.35s;
+  top: 100%;
+}
+.searchbox-enter,
+.searchbox-leave-to {
+  opacity: 0;
+  top: 130%;
 }
 </style>

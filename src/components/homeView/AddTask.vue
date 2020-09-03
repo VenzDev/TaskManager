@@ -17,6 +17,7 @@
     </SmoothHeight>
   </div>
 </template>
+
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
 import tasks from "@/store/modules/tasks";
@@ -26,8 +27,9 @@ import SmoothHeight from "@/components/smoothHeight.vue";
 export default class AddTask extends Vue {
   @Prop() columnId!: number;
   @Prop() selectedColumnId!: number;
-  @Prop() selectColumnId!: Function;
   @Prop() columnOrder!: number;
+  @Prop() selectColumnId!: Function;
+
   newTask: string | null = null;
 
   createNewTask() {
@@ -45,62 +47,49 @@ export default class AddTask extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-.expand-transition {
-  transition: all 0.3s ease;
-  height: 30px;
-  padding: 10px;
-  background-color: #eee;
-  overflow: hidden;
-}
-
-.expand-enter,
-.expand-leave {
-  height: 0;
-  padding: 0 10px;
-  opacity: 0;
-}
+@import "@/styles/config.scss";
 
 .addTask {
   border-top: 1px solid lightgray;
   padding: 0.5rem;
   text-align: center;
 
-  & > div {
+  > div {
     transition: 0.5s;
     max-height: 400px;
   }
 
-  & .addIcon {
+  .addIcon {
     font-size: 1.5rem;
     transition: 0.2s;
     cursor: pointer;
 
     &:hover {
-      color: blue;
+      color: $color-blue;
     }
   }
 
-  & > p {
+  > p {
     cursor: pointer;
   }
 
-  & .addContainer {
+  .addContainer {
     width: 80%;
     display: flex;
     flex-wrap: wrap;
     margin: 0 auto;
 
-    & .addInput {
+    .addInput {
       width: 100%;
       padding: 1px;
       position: relative;
-      background: lightgray;
+      background: $color-light;
       z-index: 1;
       border-radius: 6px;
       overflow: hidden;
       margin: 1rem 0;
 
-      & input {
+      input {
         width: 100%;
         color: blue;
         height: 30px;
@@ -112,38 +101,39 @@ export default class AddTask extends Vue {
         text-indent: 1rem;
 
         &:focus {
-          box-shadow: 0px 4px 6px rgba($color: blue, $alpha: 0.5);
+          box-shadow: 0px 4px 6px rgba($color: $color-blue, $alpha: 0.5);
           & ~ .inputBorder {
             width: 100%;
             height: 100%;
           }
         }
       }
-      & .inputBorder {
+
+      .inputBorder {
         position: absolute;
         content: "";
         top: 0;
         left: 0;
         width: 0%;
         height: 0%;
-        background: blue;
+        background: $color-blue;
         z-index: -1;
         transition: height 0.3s, width 0.3s 0.1s;
       }
     }
 
-    & .addButtons {
+    .addButtons {
       width: 100%;
       display: flex;
       cursor: pointer;
 
-      & > p {
+      > p {
         flex: 0 0 50%;
         text-align: center;
         transition: 0.2s;
 
         &:hover {
-          color: blue;
+          color: $color-blue;
         }
       }
     }

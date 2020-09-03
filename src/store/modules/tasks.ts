@@ -1,7 +1,7 @@
 import { Module, VuexModule, getModule, Mutation, Action } from "vuex-module-decorators";
 import store from "@/store";
 import { TaskListModel, TaskModel } from "../models/TaskListModel";
-import { initTasks } from "../initTasks";
+import { initTasks, fillData } from "../initTasks";
 import generateID from "@/utils/generateID";
 import UserModel from "../models/UserModel";
 
@@ -123,7 +123,9 @@ class Tasks extends VuexModule {
   @Action({ commit: "updateTasks" })
   getTasksFromLocalStorage() {
     const local = localStorage.getItem("tasks");
-    if (local === null) return this.tasksColumns;
+
+    //DEV
+    if (local === null) return JSON.parse(fillData);
     return JSON.parse(local);
   }
 }

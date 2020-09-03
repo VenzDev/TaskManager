@@ -108,7 +108,7 @@ export default class MoveTaskModal extends Vue {
     justify-content: center;
 
     & button {
-      @include submitButton;
+      //@include submitButton;
     }
   }
 }

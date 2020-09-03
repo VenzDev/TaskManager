@@ -1,43 +1,31 @@
-@mixin primaryButton {
-  display: block;
-  margin: 1rem;
-  width: 200px;
-  text-align: left;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  border: none;
+@mixin blueButton {
+  background-color: blue;
   color: white;
-  background-color: green;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba($color: blue, $alpha: 0.3);
   font-size: 1rem;
   transition: 0.2s;
-
-  & i {
-    width: 20px;
-  }
-}
-
-@mixin primaryButtonWithHover {
-  @include primaryButton();
+  outline: none;
+  border: none;
+  cursor: pointer;
 
   &:hover {
-    font-size: 1.05rem;
+    box-shadow: 0px 6px 10px rgba($color: blue, $alpha: 0.8);
   }
 }
 
-@mixin submitButton {
-  padding: 0.5rem;
+@mixin normalButton {
+  background-color: white;
+  color: black;
+  border-radius: 10px;
+  border: 1px solid $color-light;
+  box-shadow: 0px 4px 8px rgba($color: #f3f5f8, $alpha: 0.5);
   font-size: 1rem;
+  transition: 0.2s;
   cursor: pointer;
-  margin-left: 1rem;
-  background-color: green;
-  color: white;
-  border: 1px solid black;
 
-  &:first-child {
-    padding: 0.5rem 1rem;
-    background-color: red;
+  &:hover {
+    box-shadow: 0px 6px 10px rgba($color: #f3f5f8, $alpha: 0.8);
   }
 }
 

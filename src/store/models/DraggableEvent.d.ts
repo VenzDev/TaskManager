@@ -9,6 +9,8 @@ export default interface DraggableEvent {
     id: string;
   };
   to: {
-    id: string;
+    parentElement: {
+      id: string;
+    };
   };
 }

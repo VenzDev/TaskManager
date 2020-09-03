@@ -1,14 +1,5 @@
 <template>
   <div>
-    <MoveTaskModal
-      :isModalOpen="isMoveTaskModalOpen"
-      :toggleModal="toggleMoveTaskModal"
-      :currentColumnName="columnName"
-      :columnOrder="columnOrder"
-      :taskOrder="taskOrder"
-      :updateTask="updateTask"
-      :task="task"
-    />
     <AssignUserModal
       :columnOrder="columnOrder"
       :taskOrder="taskOrder"
@@ -21,24 +12,29 @@
         <button @click="handleRedirect"><i class="fas fa-arrow-left"></i> Wróć do listy zadań</button>
         <h2>{{ `Lista: ${columnName}` }}</h2>
         <p>{{ `Zadanie: ${task.text}` }}</p>
-        <div class="textareaWrapper" @click="handleActiveTextarea">
-          <textarea
-            ref="textarea"
-            :placeholder="task.description ? task.description : 'Wpisz badziej szczegółowy opis'"
-            :class="{ active: activeTextarea }"
-            v-model="taskDescription"
-            :disabled="!activeTextarea"
-          ></textarea>
+        <div class="textareaWrapper">
+          <div @click="handleActiveTextarea">
+            <textarea
+              ref="textarea"
+              :placeholder="task.description ? task.description : 'Wpisz badziej szczegółowy opis'"
+              :class="{ active: activeTextarea }"
+              v-model="taskDescription"
+              :disabled="!activeTextarea"
+            ></textarea>
+          </div>
+          <transition name="fade">
+            <div class="textareaButtons" v-if="activeTextarea">
+              <button @click="editTaskDescription"><i class="fas fa-edit"></i> Edytuj</button>
+              <button @click="disableTextarea"><i class="fas fa-times"></i></button>
+            </div>
+          </transition>
         </div>
-        <div class="textareaButtons" v-if="activeTextarea">
-          <button @click="editTaskDescription"><i class="fas fa-edit"></i> Edytuj</button>
-          <button @click="disableTextarea"><i class="fas fa-times"></i></button>
-        </div>
-        <p v-if="!task.user">Nie przydzielono użytkownika do zadania</p>
+
+        <p class="noUserText" v-if="!task.user">Nie przydzielono użytkownika do zadania</p>
         <div v-else class="userDesc">
           <div>
             <router-link class="userName" tag="p" :to="`/user/${task.user.id}`">{{
-              task.user.first_name + " " + task.user.last_name
+              `${task.user.first_name} ${task.user.last_name}`
             }}</router-link>
             <p>{{ task.user.email }}</p>
             <p>{{ task.user.job_title }}</p>
@@ -53,7 +49,17 @@
       <div class="taskOptions">
         <h2>Działania</h2>
         <button @click="toggleAssignUserModal"><i class="far fa-user"></i> Przydziel zadanie</button>
-        <button @click="toggleMoveTaskModal"><i class="fas fa-exchange-alt"></i> Przenieś zadanie</button>
+        <div>
+          <button @click="toggleMoveTaskModal">
+            Przenieś zadanie
+            <p :class="{ active: isMoveTaskModalOpen }"><i class="fas fa-angle-down"></i></p>
+          </button>
+        </div>
+        <transition name="moveOptions">
+          <div v-if="isMoveTaskModalOpen" class="moveOptions">
+            <span @click="moveTask(option)" v-for="option in availableColumns" :key="option.id">{{ option.text }}</span>
+          </div>
+        </transition>
       </div>
     </div>
   </div>
@@ -63,9 +69,14 @@
 import { Vue, Component } from "vue-property-decorator";
 import tasks from "@/store/modules/tasks";
 import { TaskModel } from "@/store/models/TaskListModel";
-import { AssignUserModal, MoveTaskModal } from "@/components/taskView";
+import { AssignUserModal } from "@/components/taskView";
 
-@Component({ components: { MoveTaskModal, AssignUserModal } })
+interface Column {
+  id: number;
+  text: string;
+}
+
+@Component({ components: { AssignUserModal } })
 export default class Task extends Vue {
   columnName: string | null = null;
   task: TaskModel | null = null;
@@ -74,6 +85,8 @@ export default class Task extends Vue {
 
   columnOrder: number | null = null;
   taskOrder: number | null = null;
+
+  availableColumns: Array<Column> = [];
 
   isMoveTaskModalOpen = false;
   isAssignUserModalOpen = false;
@@ -86,6 +99,7 @@ export default class Task extends Vue {
   toggleMoveTaskModal() {
     this.isMoveTaskModalOpen = !this.isMoveTaskModalOpen;
   }
+
   toggleAssignUserModal() {
     this.isAssignUserModalOpen = !this.isAssignUserModalOpen;
   }
@@ -107,9 +121,22 @@ export default class Task extends Vue {
     if (this.columnName === null) this.$router.push("/");
   }
 
+  moveTask(column: Column) {
+    if (column !== null && this.columnOrder !== null && this.taskOrder !== null) {
+      tasks.moveTask({ columnOrder: this.columnOrder, taskOrder: this.taskOrder, columnId: column.id });
+      this.updateTask();
+    }
+    this.toggleMoveTaskModal();
+  }
+
   created() {
     this.updateTask();
+
+    tasks.allTasks.forEach(column => {
+      if (column.text !== this.columnName) this.availableColumns.push({ id: column.id, text: column.text });
+    });
   }
+
   editTaskDescription() {
     if (this.columnOrder !== null && this.taskOrder !== null && this.taskDescription) {
       tasks.editTaskDescription({
@@ -120,9 +147,11 @@ export default class Task extends Vue {
     }
     this.disableTextarea();
   }
+
   disableTextarea() {
     this.activeTextarea = false;
   }
+
   handleRedirect() {
     this.$router.push("/");
   }
@@ -139,9 +168,9 @@ export default class Task extends Vue {
   left: 50%;
   transform: translateX(-50%);
   border-radius: 6px;
-  box-shadow: 0px 6px 12px rgba($color: #000000, $alpha: 0.25);
-  height: 80vh;
-  background-color: $color-light;
+  box-shadow: 0px 12px 24px rgba($color: #000000, $alpha: 0.15);
+  min-height: 80vh;
+  background-color: white;
 
   @media (max-width: 1100px) {
     width: 90%;
@@ -158,51 +187,70 @@ export default class Task extends Vue {
     margin: 0 10%;
     flex-basis: 70%;
 
+    .noUserText {
+      margin-top: 3rem;
+    }
+
     & > button {
-      @include primaryButtonWithHover;
+      @include blueButton;
+      padding: 0.5rem 0.8rem;
+      margin-top: 1rem;
+      margin-left: 1rem;
+      outline: none;
+      border: none;
     }
     & .textareaWrapper {
       margin: 0 1rem;
-    }
-    textarea {
-      display: block;
-      height: 120px;
-      width: 100%;
-      box-sizing: border-box;
-      font-size: 1rem;
-      padding-top: 0.5rem;
-      padding-left: 0.5rem;
+      position: relative;
 
-      &:disabled {
-        color: black;
+      textarea {
+        display: block;
+        height: 120px;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 1rem;
+        padding-top: 0.5rem;
+        padding-left: 0.5rem;
+        outline: none;
+
+        &:disabled {
+          color: black;
+        }
+
+        cursor: pointer;
+        resize: none;
+        &.active {
+          cursor: initial;
+        }
       }
 
-      cursor: pointer;
-      resize: none;
-      &.active {
-        cursor: initial;
-      }
-    }
-    .textareaButtons {
-      display: flex;
-      justify-content: flex-end;
-      margin-right: 1rem;
+      .textareaButtons {
+        position: absolute;
+        right: 0;
+        display: flex;
+        justify-content: flex-end;
+        margin-left: 1rem;
 
-      & button {
-        @include primaryButton;
-        margin: 0.5rem;
-        width: auto;
-        text-align: center;
-
-        &:last-child {
-          background-color: red;
+        & button {
+          @include blueButton;
+          padding: 0.4rem 0.8rem;
+          border: none;
+          outline: none;
+          margin: 0.5rem;
+          width: auto;
+          text-align: center;
         }
       }
     }
+
     & .userDesc {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin: 1rem;
+      margin-top: 3rem;
+      border: 1px solid $color-light;
+      border-radius: 6px;
 
       @media (max-width: 600px) {
         flex-direction: column;
@@ -210,6 +258,10 @@ export default class Task extends Vue {
 
       & div {
         flex: 0 0 50%;
+
+        img {
+          width: 90%;
+        }
       }
 
       & .userName {
@@ -232,6 +284,10 @@ export default class Task extends Vue {
     @media (max-width: 750px) {
       order: -1;
       flex-basis: 20%;
+      border-bottom: 1px solid $color-light;
+    }
+    > div {
+      position: relative;
     }
 
     & h2 {
@@ -240,11 +296,65 @@ export default class Task extends Vue {
     }
 
     & button {
-      @include primaryButtonWithHover;
-      width: 180px;
+      @include blueButton;
+      display: block;
+      padding: 0.5rem 0.8rem;
+      outline: none;
+      border: none;
       margin: 1rem auto;
-      background-color: red;
+    }
+    & button:last-child {
+      margin-bottom: 0.5rem;
+      p {
+        display: inline-block;
+        background-color: royalblue;
+        width: 20px;
+        border-radius: 6px;
+        transition: 0.3s;
+        transform: rotate(0);
+      }
+      p.active {
+        display: inline-block;
+        transform: rotate(180deg);
+      }
+    }
+    .moveOptions {
+      background-color: #f3f5f8;
+      width: 60%;
+      padding: 0.5rem;
+      margin: 0 auto;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba($color: #000000, $alpha: 0.1);
+      span {
+        display: block;
+        cursor: pointer;
+        transition: 0.3s;
+        margin: 0.2rem 0;
+
+        &:hover {
+          color: blue;
+        }
+      }
     }
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.moveOptions-enter-active,
+.moveOptions-leave-active {
+  transition: 0.35s;
+}
+.moveOptions-enter,
+.moveOptions-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
 }
 </style>

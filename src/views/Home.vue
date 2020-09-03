@@ -48,7 +48,7 @@ import tasks from "@/store/modules/tasks";
 import searchbox from "@/store/modules/searchbox";
 import { Column, AddTask, Task } from "@/components/homeView";
 import { TaskListModel } from "@/store/models/TaskListModel";
-import { list, PROJECT_MANAGER, TASK_ADDED } from "@/store/initTasks";
+import { list, PROJECT_MANAGER } from "@/store/initTasks";
 import UserModel from "@/store/models/UserModel";
 import SmoothHeight from "@/components/smoothHeight.vue";
 
@@ -80,20 +80,20 @@ export default class Home extends Vue {
     this.selectedUser = searchbox.searchbarUser;
     if (!searchbox.searchbarUser) return this.allTasks;
 
-    const copyColumns: Array<TaskListModel> = [];
+    const copiedColumns: Array<TaskListModel> = [];
     const columns = this.allTasks;
 
     //prevent from modify original tasks
-    for (let i = 0; i < columns.length; i++)
-      copyColumns[i] = Object.assign({ ...columns[i], list: [...columns[i].list] });
+    columns.forEach(column => copiedColumns.push({ ...column, list: [...column.list] }));
 
-    copyColumns.forEach(column => {
+    copiedColumns.forEach(column => {
       column.list = column.list.filter(task => {
         if (task.user && this.selectedUser && task.user.id === this.selectedUser.id) return task;
       });
     });
-    return copyColumns;
+    return copiedColumns;
   }
+
   set tasksColumns(_tasks) {
     if (_tasks) tasks.updateTasks(_tasks);
   }
@@ -101,12 +101,14 @@ export default class Home extends Vue {
   start(e: DraggableEvent) {
     e.item.classList.add("hide");
   }
+
   end(e: DraggableEvent) {
     e.item.classList.remove("hide");
     tasks.changeTasks(this.allTasks);
   }
+
   checkMove(e: DraggableEvent) {
-    if (parseInt(e.to.id) === list.DONE && e.dragged.id !== PROJECT_MANAGER) return false;
+    if (parseInt(e.to.parentElement.id) === list.DONE && e.dragged.id !== PROJECT_MANAGER) return false;
     return true;
   }
 }
@@ -114,16 +116,6 @@ export default class Home extends Vue {
 
 <style lang="scss" scoped>
 @import "@/styles/config.scss";
-
-.list-enter-active {
-  transition: opacity 0.5s;
-}
-.list-enter {
-  opacity: 0;
-}
-.list-leave-active {
-  display: none !important;
-}
 
 .columnsContainer {
   display: flex;
@@ -146,7 +138,19 @@ export default class Home extends Vue {
     @include customScrollbar;
   }
 }
+
 .hide {
   opacity: 0;
+}
+
+//Task transition
+.list-enter-active {
+  transition: opacity 0.5s;
+}
+.list-enter {
+  opacity: 0;
+}
+.list-leave-active {
+  display: none !important;
 }
 </style>

@@ -20,15 +20,15 @@ export default class Column extends Vue {
 .column {
   flex: 0 0 18%;
   border-radius: 6px;
-  background-color: #fff;
-  box-shadow: 0 0 60px 0 #e4e7eb;
+  background-color: white;
+  box-shadow: 10px 20px 30px 0 #e4e7eb;
 
   @media (max-width: 1000px) {
     flex: 0 0 250px;
     margin-right: 20px;
   }
 
-  & .columnName {
+  .columnName {
     font-weight: normal;
     cursor: grab;
     padding: 1rem;

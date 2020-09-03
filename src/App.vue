@@ -1,6 +1,8 @@
 <template>
   <Wrapper>
-    <router-view class="container" />
+    <transition name="fade" mode="out-in">
+      <router-view class="container" />
+    </transition>
   </Wrapper>
 </template>
 <script lang="ts">
@@ -17,4 +19,17 @@ export default class App extends Vue {
 </script>
 <style lang="scss">
 @import "@/styles/app.global.scss";
+
+.container {
+  min-height: calc(100vh - 50px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>
